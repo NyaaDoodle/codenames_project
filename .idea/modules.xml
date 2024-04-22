@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/Codenames.iml" filepath="$PROJECT_DIR$/Codenames.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ConsoleUserInterface/ConsoleUserInterface.iml" filepath="$PROJECT_DIR$/ConsoleUserInterface/ConsoleUserInterface.iml" />
+      <module fileurl="file://$PROJECT_DIR$/GameEngine/GameEngine.iml" filepath="$PROJECT_DIR$/GameEngine/GameEngine.iml" />
+    </modules>
+  </component>
+</project>

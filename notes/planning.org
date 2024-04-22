@@ -1,0 +1,6 @@
+* Planning
+
+* TODO tasks
+
+* DONE tasks
+** Creating a project in Intellij, and then creating two modules for the game engine and console UI
