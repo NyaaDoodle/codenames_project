@@ -15,6 +15,12 @@ public class GameInstanceData {
 
     public GameInstanceData() {}
 
+    public GameInstanceData(GameInstanceData gid) {
+        // this.gameWords
+        // this.blackWords
+
+    }
+
     public List<String> getGameWords() {
         return gameWords;
     }
