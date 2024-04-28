@@ -1,5 +1,7 @@
 package engine;
 
+import engine.gameinstance.GameInstanceData;
+
 public interface CodenamesEngine {
     // Accepts a filename argument, reads data according to the XML schema, loads attributes into the game engine.
     // Return true if the operation ended successfully, otherwise false.

@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Codenames.iml" filepath="$PROJECT_DIR$/Codenames.iml" />
-      <module fileurl="file://$PROJECT_DIR$/ConsoleUserInterface/ConsoleUserInterface.iml" filepath="$PROJECT_DIR$/ConsoleUserInterface/ConsoleUserInterface.iml" />
-      <module fileurl="file://$PROJECT_DIR$/GameEngine/GameEngine.iml" filepath="$PROJECT_DIR$/GameEngine/GameEngine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/codenames.iml" filepath="$PROJECT_DIR$/codenames.iml" />
+      <module fileurl="file://$PROJECT_DIR$/consoleUserInterface/consoleUserInterface.iml" filepath="$PROJECT_DIR$/consoleUserInterface/consoleUserInterface.iml" />
+      <module fileurl="file://$PROJECT_DIR$/gameEngine/gameEngine.iml" filepath="$PROJECT_DIR$/gameEngine/gameEngine.iml" />
     </modules>
   </component>
 </project>
