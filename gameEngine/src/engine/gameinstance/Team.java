@@ -5,10 +5,10 @@ public class Team {
     int cardCount;
     int currentScore;
 
-    public Team(String name, int cardCount, int currentScore) {
+    public Team(String name, int cardCount) {
         this.name = name;
         this.cardCount = cardCount;
-        this.currentScore = currentScore;
+        this.currentScore = 0;
     }
 
     public String getName() {
