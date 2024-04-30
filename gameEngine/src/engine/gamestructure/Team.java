@@ -1,4 +1,4 @@
-package engine.gameinstance;
+package engine.gamestructure;
 
 public class Team {
     String name;

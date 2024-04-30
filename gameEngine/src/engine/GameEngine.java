@@ -1,13 +1,13 @@
 package engine;
 
-import engine.gameinstance.*;
+import engine.gamestructure.*;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 public class GameEngine implements CodenamesEngine {
-    private GameInstance currentGameData = new GameInstance();
+    private GameStructure currentGameData = new GameStructure();
 
     public GameEngine() {
 
@@ -15,7 +15,7 @@ public class GameEngine implements CodenamesEngine {
 
     @Override
     public boolean readFromDescriptorFile(String fileName) {
-        List<String> testGameWords = Arrays.asList("encapsulation", "german", "poland", "kombat",
+        Set<String> testGameWords = Arrays.asSet("encapsulation", "german", "poland", "kombat",
                 "waffele", "whom", "leg", "character", "terms", "else", "camel", "rabbit", "fire",
                 "text", "element", "sky", "item", "robot", "past", "dune", "dolphine", "then",
                 "it", "am", "quality", "eye", "moon", "system", "folder", "light", "letter",
@@ -25,7 +25,7 @@ public class GameEngine implements CodenamesEngine {
                 "democracy", "off", "battle", "single", "fly", "component", "blue", "watch",
                 "reflector", "future", "machine", "progress", "atom", "under", "inferno",
                 "voice", "rotor", "tonight"); // Length: 78
-        List<String> testBlackWords = Arrays.asList("mouce", "door", "data", "use", "doom", "sign",
+        Set<String> testBlackWords = Arrays.asList("mouce", "door", "data", "use", "doom", "sign",
                 "screen", "do", "bomb", "red", "later", "whale", "white", "hello", "than", "which",
                 "england", "morning", "dirt", "tree", "thrown", "water", "trash", "ranch", "she",
                 "sand", "squad", "desk", "present", "where", "magenta", "game", "code", "enigma",
@@ -46,8 +46,8 @@ public class GameEngine implements CodenamesEngine {
     }
 
     @Override
-    public GameInstanceData getCurrentGameInstanceDetails() {
-        return new GameInstanceData(currentGameData);
+    public GameStructureData getCurrentGameStructureDetails() {
+        return new GameStructureData(currentGameData);
     }
 
     @Override

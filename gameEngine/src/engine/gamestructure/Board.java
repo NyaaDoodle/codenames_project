@@ -1,4 +1,4 @@
-package engine.gameinstance;
+package engine.gamestructure;
 
 public class Board {
     private int cardCount;
@@ -11,6 +11,13 @@ public class Board {
         this.blackCardCount = blackCardCount;
         this.rows = rows;
         this.columns = columns;
+    }
+
+    public Board(Board copyBoard) {
+        this.cardCount = copyBoard.cardCount;
+        this.blackCardCount = copyBoard.blackCardCount;
+        this.rows = copyBoard.rows;
+        this.columns = copyBoard.columns;
     }
 
     public int getCardCount() {

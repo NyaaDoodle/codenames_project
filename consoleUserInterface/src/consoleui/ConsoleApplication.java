@@ -1,13 +1,13 @@
 package consoleui;
 
 import engine.GameEngine;
-import engine.gameinstance.GameInstanceData;
+import engine.gamestructure.GameStructureData;
 
 public class ConsoleApplication implements CodenamesConsoleApplication {
     GameEngine engine = new GameEngine();
     public boolean firstTest() {
         engine.readFromDescriptorFile("hahahahahaha");
-        GameInstanceData testGID = engine.getCurrentGameInstanceDetails();
+        GameStructureData testGID = engine.getCurrentGameStructureDetails();
         System.out.println(testGID.getWords().getGameWords());
         System.out.println(testGID.getWords().getBlackWords());
         System.out.println(testGID.getBoard().getCardCount());
