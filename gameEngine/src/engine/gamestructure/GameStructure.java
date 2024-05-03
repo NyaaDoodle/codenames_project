@@ -1,14 +1,11 @@
 package engine.gamestructure;
 
-import java.util.Collections;
 import java.util.List;
 
 public class GameStructure {
-    private Words words;
-    private Board board;
-    private List<Team> teams;
-
-    public GameStructure() {}
+    private final Words words;
+    private final Board board;
+    private final List<Team> teams;
 
     public GameStructure(Words words, Board board, List<Team> teams) {
         this.words = words;
@@ -17,26 +14,13 @@ public class GameStructure {
     }
 
     public Words getWords() {
-        return new Words(words);
+        return words;
     }
 
-    public void setWords(Words words) {
-        this.words = words;
-    }
-
-    public Board getBoard() {
-        return new Board(board);
-    }
-
-    public void setBoard(Board board) {
-        this.board = board;
-    }
+    public Board getBoard() { return board; }
 
     public List<Team> getTeams() {
-        return Collections.unmodifiableList(teams);
+        return teams;
     }
 
-    public void setTeams(List<Team> teams) {
-        this.teams = teams;
-    }
 }

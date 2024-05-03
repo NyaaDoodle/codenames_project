@@ -1,37 +1,19 @@
 package engine.gamestructure;
 
 public class Team {
-    String name;
-    int cardCount;
-    int currentScore;
+    private final String name;
+    private final int startingCardCount;
 
-    public Team(String name, int cardCount) {
+    public Team(String name, int startingCardCount) {
         this.name = name;
-        this.cardCount = cardCount;
-        this.currentScore = 0;
+        this.startingCardCount = startingCardCount;
     }
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getCardCount() {
-        return cardCount;
-    }
-
-    public void setCardCount(int cardCount) {
-        this.cardCount = cardCount;
-    }
-
-    public int getCurrentScore() {
-        return currentScore;
-    }
-
-    public void setCurrentScore(int currentScore) {
-        this.currentScore = currentScore;
+    public int getStartingCardCount() {
+        return startingCardCount;
     }
 }

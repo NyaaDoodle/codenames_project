@@ -7,6 +7,7 @@ public class GameStructureData {
     private final Words words;
     private final Board board;
     private final List<Team> teams;
+
     public GameStructureData(GameStructure gameStructure) {
         this.words = gameStructure.getWords();
         this.board = gameStructure.getBoard();
@@ -14,14 +15,14 @@ public class GameStructureData {
     }
 
     public Words getWords() {
-        return new Words(words);
+        return words;
     }
 
     public Board getBoard() {
-        return new Board(board);
+        return board;
     }
 
     public List<Team> getTeams() {
-        return Collections.unmodifiableList(teams);
+        return teams;
     }
 }
