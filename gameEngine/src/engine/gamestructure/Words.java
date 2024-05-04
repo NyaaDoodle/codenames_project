@@ -13,10 +13,10 @@ public class Words {
     }
 
     public Set<String> getGameWords() {
-        return gameWords;
+        return Collections.unmodifiableSet(gameWords);
     }
 
     public Set<String> getBlackWords() {
-        return blackWords;
+        return Collections.unmodifiableSet(blackWords);
     }
 }

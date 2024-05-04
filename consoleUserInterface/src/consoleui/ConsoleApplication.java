@@ -1,7 +1,6 @@
 package consoleui;
 
 import engine.GameEngine;
-import engine.gamestructure.GameStructureData;
 
 public class ConsoleApplication implements CodenamesConsoleApplication {
     GameEngine engine = new GameEngine();

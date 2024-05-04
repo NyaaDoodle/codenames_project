@@ -1,5 +1,6 @@
 package engine.gamestructure;
 
+import java.util.Collections;
 import java.util.List;
 
 public class GameStructure {
@@ -20,7 +21,7 @@ public class GameStructure {
     public Board getBoard() { return board; }
 
     public List<Team> getTeams() {
-        return teams;
+        return Collections.unmodifiableList(teams);
     }
 
 }

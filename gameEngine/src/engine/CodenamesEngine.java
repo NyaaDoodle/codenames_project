@@ -1,11 +1,11 @@
 package engine;
 
 import engine.gameinstance.GameInstanceData;
-import engine.gamestructure.GameStructureData;
+import engine.gamestructure.GameStructure;
 
 public interface CodenamesEngine {
     public boolean readFromDescriptorFile(String fileName);
-    public GameStructureData getCurrentGameStructureData();
+    public GameStructure getCurrentGameStructure();
     public void beginGame();
     public void changeViewingState();
     public void makeMove(int wordIndex);

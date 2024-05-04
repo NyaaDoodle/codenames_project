@@ -1,7 +1,7 @@
 package engine.gameinstance;
 
 import engine.gamestructure.Board;
-import engine.gamestructure.GameStructureData;
+import engine.gamestructure.GameStructure;
 import engine.gamestructure.Team;
 
 import java.util.Collections;
@@ -14,14 +14,14 @@ public class GameInstance {
     private List<WordCard> words;
     private Hint currentHint;
     private Map<Team, Integer> teamToScore;
-    public GameInstance(GameStructureData gameStructureData) {
+    public GameInstance(GameStructure gameStructureData) {
         this.teams = gameStructureData.getTeams();
         this.board = gameStructureData.getBoard();
         // ..................
     }
 
     public List<Team> getTeams() {
-        return teams;
+        return Collections.unmodifiableList(teams);
     }
 
     public Board getBoard() {

@@ -1,17 +1,22 @@
 package engine;
 
 import engine.gameinstance.GameInstanceData;
-import engine.gamestructure.GameStructureData;
+import engine.gamestructure.GameStructure;
 
 public class GameEngine implements CodenamesEngine {
+    GameStructure gameStructure;
+
+    public GameEngine() {}
+
     @Override
     public boolean readFromDescriptorFile(String fileName) {
+        
         return false;
     }
 
     @Override
-    public GameStructureData getCurrentGameStructureData() {
-        return null;
+    public GameStructure getCurrentGameStructure() {
+        return gameStructure;
     }
 
     @Override
