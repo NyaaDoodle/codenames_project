@@ -5,7 +5,7 @@ import engine.GameEngine;
 public class ConsoleApplication implements CodenamesConsoleApplication {
     GameEngine engine = new GameEngine();
     public boolean firstTest() {
-        engine.readFromDescriptorFile("hahahahahaha");
+        engine.readFromXMLFile("hahahahahaha");
         GameStructureData testGID = engine.getCurrentGameStructureDetails();
         System.out.println(testGID.getWords().getGameWords());
         System.out.println(testGID.getWords().getBlackWords());

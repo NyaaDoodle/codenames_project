@@ -4,7 +4,7 @@ import engine.gameinstance.GameInstanceData;
 import engine.gamestructure.GameStructure;
 
 public interface CodenamesEngine {
-    public boolean readFromDescriptorFile(String fileName);
+    public boolean readFromGameStructureFile(String fileName);
     public GameStructure getCurrentGameStructure();
     public void beginGame();
     public void changeViewingState();

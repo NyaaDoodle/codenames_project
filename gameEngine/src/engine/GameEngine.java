@@ -9,7 +9,7 @@ public class GameEngine implements CodenamesEngine {
     public GameEngine() {}
 
     @Override
-    public boolean readFromDescriptorFile(String fileName) {
+    public boolean readFromGameStructureFile(String fileName) {
         
         return false;
     }
