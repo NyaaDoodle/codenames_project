@@ -1,5 +1,7 @@
 package consoleui;
 
-public interface CodenamesConsoleApplication {
+import engine.GameEngine;
 
+public interface CodenamesConsoleApplication {
+    GameEngine engine = new GameEngine();
 }
