@@ -20,7 +20,7 @@ public class JAXBConversion {
         ECNGame ecnGame = (ECNGame) unmarshaller.unmarshal(inputStream);
         Words outWords = convertECNWordsToEngineWords(ecnGame.getECNWords());
         Board outBoard = convertECNBoardToEngineBoard(ecnGame.getECNBoard());
-        List<Team> outTeams = convertECNTeamsToEngineTeams(ecnGame.getECNTeam1(), ecnGame.getECNTeam2());
+        Set<Team> outTeams = convertECNTeamsToEngineTeams(ecnGame.getECNTeam1(), ecnGame.getECNTeam2());
         return new GameStructure(outWords, outBoard, outTeams);
     }
     private static Words convertECNWordsToEngineWords(ECNWords ecnWords) {
@@ -38,10 +38,10 @@ public class JAXBConversion {
         final int columns = ecnLayout.getColumns();
         return new Board(cardsCount, blackCardsCount, rows, columns);
     }
-    private static List<Team> convertECNTeamsToEngineTeams(ECNTeam1 ecnTeam1, ECNTeam2 ecnTeam2) {
+    private static Set<Team> convertECNTeamsToEngineTeams(ECNTeam1 ecnTeam1, ECNTeam2 ecnTeam2) {
         // Currently, it's hardcoded for only two teams.
         Team team1 = new Team(ecnTeam1.getName(), ecnTeam1.getCardsCount());
         Team team2 = new Team(ecnTeam2.getName(), ecnTeam2.getCardsCount());
-        return new ArrayList<>(Arrays.asList(team1, team2));
+        return new HashSet<>(Arrays.asList(team1, team2));
     }
 }

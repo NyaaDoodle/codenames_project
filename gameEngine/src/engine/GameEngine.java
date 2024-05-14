@@ -56,9 +56,7 @@ public class GameEngine implements CodenamesEngine {
     }
 
     @Override
-    public GameInstanceData getCurrentGameInstanceData() {
-        return null;
-    }
+    public GameInstanceData getCurrentGameInstanceData() { return new GameInstanceData(gameInstance); }
 
     @Override
     public void endGame() {

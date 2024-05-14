@@ -28,4 +28,14 @@ public class Board {
     public int getColumns() {
         return columns;
     }
+
+    @Override
+    public String toString() {
+        return "Board{" +
+                "cardCount=" + cardCount +
+                ", blackCardCount=" + blackCardCount +
+                ", rows=" + rows +
+                ", columns=" + columns +
+                '}';
+    }
 }

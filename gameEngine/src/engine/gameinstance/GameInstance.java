@@ -4,22 +4,18 @@ import engine.gamestructure.GameStructure;
 import engine.gamestructure.Team;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class GameInstance {
+    private final static int STARTING_TEAM_SCORE = 0;
     private final GameStructure gameStructure;
-    private Set<WordCard> words = new HashSet<>();
+    private final GameWordCards wordCards;
     private Map<Team, Integer> teamToScore = new HashMap<>();
     private Hint currentHint;
     public GameInstance(GameStructure gameStructure) {
         this.gameStructure = gameStructure;
-        final Set<String> gameWords = gameStructure.getWords().getGameWords();
-        final Set<String> blackWords = gameStructure.getWords().getBlackWords();
-        final int gameWordsAmount = gameStructure.getBoard().getCardCount();
-        final int blackWordsAmount = gameStructure.getBoard().getBlackCardCount();
-        Set<String> drawnGameWords = drawWordsFromWordBank(gameWords, gameWordsAmount);
-        Set<String> drawnBlackWords = drawWordsAndCheckIfExistsAtOtherBank(blackWords, drawnGameWords, blackWordsAmount);
-
+        this.wordCards = new GameWordCards(gameStructure);
+        gameStructure.getTeams().stream().forEach((team) -> teamToScore.put(team, STARTING_TEAM_SCORE));
+        this.currentHint = null;
     }
 
     public GameStructure getGameStructure() {
@@ -34,35 +30,11 @@ public class GameInstance {
         this.currentHint = currentHint;
     }
 
-    public Set<WordCard> getWords() {
-        return Collections.unmodifiableSet(words);
+    public GameWordCards getWordCards() {
+        return wordCards;
     }
 
     public Map<Team, Integer> getTeamToScore() {
         return Collections.unmodifiableMap(teamToScore);
     }
-
-    private <E> Optional<E> getRandomMemberFromCollection(Collection<E> collection) {
-        return collection.stream().skip((long) (collection.size() * Math.random())).findFirst();
-    }
-
-    private Set<String> drawWordsFromWordBank(final Collection<String> wordBank, final int drawAmount) {
-        // BUG Infinite loop when empty set is passed
-        Set<String> drawnWords = new HashSet<>();
-        while (wordBank.size() == drawAmount) {
-            getRandomMemberFromCollection(wordBank).ifPresent(drawnWords::add);
-        }
-        return drawnWords;
-    }
-    private Set<String> drawWordsAndCheckIfExistsAtOtherBank(final Collection<String> sourceBank, final Collection<String> checkBank, final int drawAmount) {
-        // BUG Infinite loop when empty set is passed
-        Set<String> drawnWords = new HashSet<>();
-        while (sourceBank.size() == drawAmount) {
-            getRandomMemberFromCollection(sourceBank).ifPresent((word) -> {
-                if (!(checkBank.contains(word))) { sourceBank.add(word); }
-            });
-        }
-        return drawnWords;
-    }
-    private void addFromCollectionToWordCardSet()
 }

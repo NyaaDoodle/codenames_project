@@ -4,34 +4,47 @@ import engine.gamestructure.Board;
 import engine.gamestructure.GameStructure;
 import engine.gamestructure.Team;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 public class GameInstanceData {
     private final GameStructure gameStructure;
-    private final Set<WordCard> words;
-    private final Hint currentHint;
+    private final GameWordCards wordCards;
     private final Map<Team, Integer> teamToScore;
+    private final Hint currentHint;
 
     public GameInstanceData(GameInstance gameInstance) {
         this.gameStructure = gameInstance.getGameStructure();
-        this.words = gameInstance.getWords();
-        this.currentHint = gameInstance.getCurrentHint();
+        this.wordCards = gameInstance.getWordCards();
         this.teamToScore = gameInstance.getTeamToScore();
+        this.currentHint = gameInstance.getCurrentHint();
     }
 
-    public GameStructure getGameStructure() { return gameStructure; }
+    public GameStructure getGameStructure() {
+        return gameStructure;
+    }
 
-    public Set<WordCard> getWords() {
-        return words;
+    public GameWordCards getWordCards() {
+        return wordCards;
+    }
+
+    public Map<Team, Integer> getTeamToScore() {
+        return teamToScore;
     }
 
     public Hint getCurrentHint() {
         return currentHint;
     }
 
-    public Map<Team, Integer> getTeamToScore() {
-        return teamToScore;
+    @Override
+    public String toString() {
+        return "GameInstanceData{" +
+                "gameStructure=" + gameStructure +
+                ", wordCards=" + wordCards +
+                ", teamToScore=" + teamToScore +
+                ", currentHint=" + (currentHint != null ? currentHint : "No hint has been set yet") +
+                '}';
     }
 }

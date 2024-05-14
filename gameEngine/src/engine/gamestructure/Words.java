@@ -19,4 +19,12 @@ public class Words {
     public Set<String> getBlackWords() {
         return Collections.unmodifiableSet(blackWords);
     }
+
+    @Override
+    public String toString() {
+        return "Words{" +
+                "gameWords=" + gameWords +
+                ", blackWords=" + blackWords +
+                '}';
+    }
 }

@@ -25,4 +25,12 @@ public class GameStructure {
         return Collections.unmodifiableSet(teams);
     }
 
+    @Override
+    public String toString() {
+        return "GameStructure{" +
+                "words=" + words +
+                ", board=" + board +
+                ", teams=" + teams +
+                '}';
+    }
 }

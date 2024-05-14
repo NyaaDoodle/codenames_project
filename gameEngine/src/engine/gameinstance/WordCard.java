@@ -7,14 +7,12 @@ import java.util.Objects;
 public class WordCard {
     private final String word;
     private final Team team;
-    private final int index;
     private final boolean isBlackWord;
     private boolean found = false;
 
-    public WordCard(String word, Team team, int index, boolean isBlackWord) {
+    public WordCard(String word, Team team, boolean isBlackWord) {
         this.word = word;
         this.team = team;
-        this.index = index;
         this.isBlackWord = isBlackWord;
     }
 
@@ -24,10 +22,6 @@ public class WordCard {
 
     public Team getTeam() {
         return team;
-    }
-
-    public int getIndex() {
-        return index;
     }
 
     public boolean isBlackWord() { return isBlackWord; }
@@ -51,5 +45,15 @@ public class WordCard {
     @Override
     public int hashCode() {
         return Objects.hashCode(getWord());
+    }
+
+    @Override
+    public String toString() {
+        return "WordCard{" +
+                "word='" + word + '\'' +
+                ", team=" + team +
+                ", isBlackWord=" + isBlackWord +
+                ", found=" + found +
+                '}';
     }
 }

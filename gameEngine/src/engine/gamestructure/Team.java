@@ -31,4 +31,12 @@ public class Team {
     public int hashCode() {
         return Objects.hashCode(getName());
     }
+
+    @Override
+    public String toString() {
+        return "Team{" +
+                "name='" + name + '\'' +
+                ", cardCount=" + cardCount +
+                '}';
+    }
 }
