@@ -1,35 +1,29 @@
 package engine.gameinstance;
 
 import engine.gamestructure.Board;
+import engine.gamestructure.GameStructure;
 import engine.gamestructure.Team;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class GameInstanceData {
-    private final List<Team> teams;
-    private final Board board;
-    private final List<WordCard> words;
+    private final GameStructure gameStructure;
+    private final Set<WordCard> words;
     private final Hint currentHint;
     private final Map<Team, Integer> teamToScore;
 
     public GameInstanceData(GameInstance gameInstance) {
-        this.teams = gameInstance.getTeams();
-        this.board = gameInstance.getBoard();
+        this.gameStructure = gameInstance.getGameStructure();
         this.words = gameInstance.getWords();
         this.currentHint = gameInstance.getCurrentHint();
         this.teamToScore = gameInstance.getTeamToScore();
     }
 
-    public List<Team> getTeams() {
-        return teams;
-    }
+    public GameStructure getGameStructure() { return gameStructure; }
 
-    public Board getBoard() {
-        return board;
-    }
-
-    public List<WordCard> getWords() {
+    public Set<WordCard> getWords() {
         return words;
     }
 

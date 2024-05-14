@@ -2,13 +2,14 @@ package engine.gamestructure;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 public class GameStructure {
     private final Words words;
     private final Board board;
-    private final List<Team> teams;
+    private final Set<Team> teams;
 
-    public GameStructure(Words words, Board board, List<Team> teams) {
+    public GameStructure(Words words, Board board, Set<Team> teams) {
         this.words = words;
         this.board = board;
         this.teams = teams;
@@ -20,8 +21,8 @@ public class GameStructure {
 
     public Board getBoard() { return board; }
 
-    public List<Team> getTeams() {
-        return Collections.unmodifiableList(teams);
+    public Set<Team> getTeams() {
+        return Collections.unmodifiableSet(teams);
     }
 
 }

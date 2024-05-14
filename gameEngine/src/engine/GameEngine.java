@@ -1,5 +1,6 @@
 package engine;
 
+import engine.gameinstance.GameInstance;
 import engine.gameinstance.GameInstanceData;
 import engine.gamestructure.GameStructure;
 import engine.jaxb.generated.JAXBConversion;
@@ -8,11 +9,12 @@ import javax.xml.bind.JAXBException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class GameEngine implements CodenamesEngine {
     GameStructure gameStructure;
-
+    GameInstance gameInstance;
     public GameEngine() {}
 
     @Override
@@ -39,7 +41,8 @@ public class GameEngine implements CodenamesEngine {
 
     @Override
     public void beginGame() {
-
+        gameInstance = new GameInstance(gameStructure);
+        
     }
 
     @Override
