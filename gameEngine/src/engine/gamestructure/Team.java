@@ -2,18 +2,18 @@ package engine.gamestructure;
 
 public class Team {
     private final String name;
-    private final int startingCardCount;
+    private final int cardCount;
 
-    public Team(String name, int startingCardCount) {
+    public Team(String name, int cardCount) {
         this.name = name;
-        this.startingCardCount = startingCardCount;
+        this.cardCount = cardCount;
     }
 
     public String getName() {
         return name;
     }
 
-    public int getStartingCardCount() {
-        return startingCardCount;
+    public int getCardCount() {
+        return cardCount;
     }
 }

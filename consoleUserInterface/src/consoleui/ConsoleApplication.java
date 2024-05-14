@@ -1,16 +1,23 @@
 package consoleui;
 
-import engine.GameEngine;
 import engine.gamestructure.Board;
 import engine.gamestructure.GameStructure;
 import engine.gamestructure.Team;
 import engine.gamestructure.Words;
 
 import java.util.List;
-import java.util.Set;
 
 public class ConsoleApplication implements CodenamesConsoleApplication {
     public static void main(String[] args) {
+        testingMain();
+
+        /*
+        Framework for main():
+        printGameGreeter();
+
+         */
+    }
+    public static void testingMain() {
         xmlLoadTest("gameEngine/test-files/error-2.xml");
         printCurrentGameStructure(engine.getCurrentGameStructure());
     }
@@ -34,7 +41,7 @@ public class ConsoleApplication implements CodenamesConsoleApplication {
         System.out.println(board.getColumns());
         final List<Team> teams = gameStructure.getTeams();
         for (Team team : teams) {
-            System.out.println(team.getName() + ", " + team.getStartingCardCount());
+            System.out.println(team.getName() + ", " + team.getCardCount());
         }
     }
 }

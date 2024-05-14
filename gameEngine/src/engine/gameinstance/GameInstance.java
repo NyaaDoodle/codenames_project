@@ -1,6 +1,5 @@
 package engine.gameinstance;
 
-import engine.gamestructure.Board;
 import engine.gamestructure.GameStructure;
 import engine.gamestructure.Team;
 
@@ -9,23 +8,17 @@ import java.util.List;
 import java.util.Map;
 
 public class GameInstance {
-    private final List<Team> teams;
-    private final Board board;
+    private final GameStructure gameStructure;
     private List<WordCard> words;
     private Hint currentHint;
     private Map<Team, Integer> teamToScore;
-    public GameInstance(GameStructure gameStructureData) {
-        this.teams = gameStructureData.getTeams();
-        this.board = gameStructureData.getBoard();
+    public GameInstance(GameStructure gameStructure) {
+        this.gameStructure = gameStructure;
         // ..................
     }
 
-    public List<Team> getTeams() {
-        return Collections.unmodifiableList(teams);
-    }
-
-    public Board getBoard() {
-        return board;
+    public GameStructure getGameStructure() {
+        return gameStructure;
     }
 
     public Hint getCurrentHint() {
