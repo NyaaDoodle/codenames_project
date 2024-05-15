@@ -10,10 +10,11 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import java.io.InputStream;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class JAXBConversion {
     private final static String GENERATED_XJC_CLASSES_PACKAGE = "engine.jaxb.generated";
-    private final static String splitDelimiters = " ";
+    private final static String splitDelimiters = "\\s";
     public static GameStructure XMLToObjectsConversion(InputStream inputStream) throws JAXBException {
         JAXBContext jaxbContext = JAXBContext.newInstance(GENERATED_XJC_CLASSES_PACKAGE);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
@@ -25,9 +26,11 @@ public class JAXBConversion {
     }
     private static Words convertECNWordsToEngineWords(ECNWords ecnWords) {
         final String ecnGameWords = ecnWords.getECNGameWords();
-        final Set<String> gameWords = new HashSet<>(Arrays.asList(ecnGameWords.split(splitDelimiters)));
+        Set<String> gameWords = new HashSet<>(Arrays.asList(ecnGameWords.split(splitDelimiters)));
+        gameWords = removeBlankWords(gameWords);
         final String ecnBlackWords = ecnWords.getECNBlackWords();
-        final Set<String> blackWords = new HashSet<>(Arrays.asList(ecnBlackWords.split(splitDelimiters)));
+        Set<String> blackWords = new HashSet<>(Arrays.asList(ecnBlackWords.split(splitDelimiters)));
+        blackWords = removeBlankWords(blackWords);
         return new Words(gameWords, blackWords);
     }
     private static Board convertECNBoardToEngineBoard(ECNBoard ecnBoard) {
@@ -43,5 +46,8 @@ public class JAXBConversion {
         Team team1 = new Team(ecnTeam1.getName(), ecnTeam1.getCardsCount());
         Team team2 = new Team(ecnTeam2.getName(), ecnTeam2.getCardsCount());
         return new HashSet<>(Arrays.asList(team1, team2));
+    }
+    private static Set<String> removeBlankWords(final Collection<String> wordBank) {
+        return wordBank.stream().filter((word) -> !(word.trim().isEmpty())).collect(Collectors.toSet());
     }
 }

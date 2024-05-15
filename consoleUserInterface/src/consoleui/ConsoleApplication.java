@@ -23,7 +23,8 @@ public class ConsoleApplication implements CodenamesConsoleApplication {
     public static void testingMain() {
         xmlLoadTest("gameEngine/test-files/classic.xml");
         printCurrentGameStructure(engine.getCurrentGameStructure());
-        printCurrentGameInstance(engine.getCurrentGameInstanceData());
+        engine.beginGame();
+        System.out.println(engine.getCurrentGameInstanceData().getGameStructure());
     }
     public static void xmlLoadTest(String fileName) {
         try {

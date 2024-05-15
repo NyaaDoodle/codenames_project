@@ -26,7 +26,7 @@ public class GameWordCards {
         populateWordCards();
     }
 
-    public List<WordCard> getWordCardSet() { return Collections.unmodifiableList(wordCards); }
+    public List<WordCard> getWordCardList() { return Collections.unmodifiableList(wordCards); }
 
     private void populateWordCards() {
         Set<String> drawnGameWords = drawWordsFromWordBank(wordBanks.getGameWords(), gameCardsCount);
@@ -46,16 +46,16 @@ public class GameWordCards {
 
     private Set<String> drawWordsFromWordBank(final Collection<String> wordBank, final int drawAmount) {
         Set<String> drawnWords = new HashSet<>();
-        while (wordBank.size() == drawAmount) {
+        while (drawnWords.size() != drawAmount) {
             getRandomMemberFromCollection(wordBank).ifPresent(drawnWords::add);
         }
         return drawnWords;
     }
     private Set<String> drawWordsAndCheckIfExistsAtOtherBank(final Collection<String> sourceBank, final Collection<String> checkBank, final int drawAmount) {
         Set<String> drawnWords = new HashSet<>();
-        while (sourceBank.size() == drawAmount) {
+        while (drawnWords.size() != drawAmount) {
             getRandomMemberFromCollection(sourceBank).ifPresent((word) -> {
-                if (!(checkBank.contains(word))) { sourceBank.add(word); }
+                if (!(checkBank.contains(word))) { drawnWords.add(word); }
             });
         }
         return drawnWords;
