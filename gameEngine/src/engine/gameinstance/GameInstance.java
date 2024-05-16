@@ -12,6 +12,7 @@ public class GameInstance {
     private final Map<Team, Integer> teamToScore = new HashMap<>();
     private final TurnOrder turnOrder;
     private Hint currentHint;
+    private ViewingState viewingState = ViewingState.HiddenView;
     public GameInstance(final GameStructure gameStructure, final Queue<Team> turnOrder) {
         this.gameStructure = gameStructure;
         this.wordCards = new GameWordCards(gameStructure);
@@ -38,5 +39,17 @@ public class GameInstance {
 
     public Map<Team, Integer> getTeamToScore() {
         return Collections.unmodifiableMap(teamToScore);
+    }
+
+    public TurnOrder getTurnOrder() {
+        return turnOrder;
+    }
+
+    public ViewingState getViewingState() {
+        return viewingState;
+    }
+
+    public void setViewingState(ViewingState viewingState) {
+        this.viewingState = viewingState;
     }
 }

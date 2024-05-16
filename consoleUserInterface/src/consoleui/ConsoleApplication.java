@@ -1,5 +1,6 @@
 package consoleui;
 
+import engine.GameEngine;
 import engine.gameinstance.GameInstance;
 import engine.gameinstance.GameInstanceData;
 import engine.gamestructure.Board;
@@ -10,15 +11,32 @@ import engine.gamestructure.Words;
 import java.util.List;
 import java.util.Set;
 
-public class ConsoleApplication implements CodenamesConsoleApplication {
+public class ConsoleApplication {
+    private static GameEngine engine = new GameEngine();
+    private static int currentMenuIndex = 1;
     public static void main(String[] args) {
-        testingMain();
-
-        /*
-        Framework for main():
-        printGameGreeter();
-
-         */
+        printMainMenu();
+    }
+    private static void printMainMenu() {
+        int currentIndex = 1;
+        System.out.println("Codenames, Version 1");
+        System.out.println("Choose a number to select an option:");
+        if (!(isGameStructureLoaded())) {
+            System.out.println(currentIndexString() + "Load game format");
+            System.out.println(currentIndexString() + "Exit program");
+        }
+        else {
+            System.out.println(currentIndexString() + "Start a new game");
+            System.out.println(currentIndexString() + "Show loaded game format information");
+            System.out.println(currentIndexString() + "Load a different game format");
+            System.out.println(currentIndexString() + "Exit program");
+        }
+    }
+    private static String currentIndexString() {
+        return "(" + currentMenuIndex++ + ") ";
+    }
+    private static boolean isGameStructureLoaded() {
+        return engine.getCurrentGameStructure() != null;
     }
     public static void testingMain() {
         xmlLoadTest("gameEngine/test-files/classic.xml");
