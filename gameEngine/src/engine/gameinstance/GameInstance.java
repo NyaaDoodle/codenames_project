@@ -9,13 +9,15 @@ public class GameInstance {
     private final static int STARTING_TEAM_SCORE = 0;
     private final GameStructure gameStructure;
     private final GameWordCards wordCards;
-    private Map<Team, Integer> teamToScore = new HashMap<>();
+    private final Map<Team, Integer> teamToScore = new HashMap<>();
+    private final TurnOrder turnOrder;
     private Hint currentHint;
-    public GameInstance(GameStructure gameStructure) {
+    public GameInstance(final GameStructure gameStructure, final Queue<Team> turnOrder) {
         this.gameStructure = gameStructure;
         this.wordCards = new GameWordCards(gameStructure);
         gameStructure.getTeams().stream().forEach((team) -> teamToScore.put(team, STARTING_TEAM_SCORE));
         this.currentHint = null;
+        this.turnOrder = new TurnOrder(turnOrder);
     }
 
     public GameStructure getGameStructure() {

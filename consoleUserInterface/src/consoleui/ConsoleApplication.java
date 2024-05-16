@@ -24,7 +24,7 @@ public class ConsoleApplication implements CodenamesConsoleApplication {
         xmlLoadTest("gameEngine/test-files/classic.xml");
         printCurrentGameStructure(engine.getCurrentGameStructure());
         engine.beginGame();
-        System.out.println(engine.getCurrentGameInstanceData().getGameStructure());
+        System.out.println(engine.getCurrentGameInstanceData().getWordCards().getWordCardList());
     }
     public static void xmlLoadTest(String fileName) {
         try {
