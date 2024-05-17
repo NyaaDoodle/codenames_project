@@ -14,11 +14,18 @@ import java.util.Set;
 public class ConsoleApplication {
     private static GameEngine engine = new GameEngine();
     private static int currentMenuIndex = 1;
+    private static boolean toExitProgram = false;
     public static void main(String[] args) {
+        while (!(toExitProgram)) {
+            presentMainMenu();
+        }
+    }
+    private static void acceptUserInput() {}
+    private static void presentMainMenu() {
         printMainMenu();
     }
     private static void printMainMenu() {
-        int currentIndex = 1;
+        currentMenuIndex = 1;
         System.out.println("Codenames, Version 1");
         System.out.println("Choose a number to select an option:");
         if (!(isGameStructureLoaded())) {
