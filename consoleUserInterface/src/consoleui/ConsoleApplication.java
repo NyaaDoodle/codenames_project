@@ -1,16 +1,15 @@
 package consoleui;
 
 import engine.GameEngine;
-import engine.gameinstance.GameInstance;
-import engine.gameinstance.GameInstanceData;
-import engine.gameinstance.GameState;
-import engine.gameinstance.ViewingState;
+import engine.gameinstance.*;
 import engine.gamestructure.Board;
 import engine.gamestructure.GameStructure;
 import engine.gamestructure.Team;
 import engine.gamestructure.Words;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class ConsoleApplication {
     private static GameEngine engine = new GameEngine();
@@ -62,8 +61,38 @@ public class ConsoleApplication {
             gameInstanceData = engine.getCurrentGameInstanceData();
         }
     }
-    private static void printBoardState(ViewingState viewingState) {
+    private static void printBoardState(final ViewingState viewingState) {
+        final Board board = engine.getCurrentGameStructure().getBoard();
+        final int boardRows = board.getRows();
+        final int boardColumns = board.getColumns();
+        /*
+     encapsulation
+[1] X (My team and such)
+required space: 2 spaces between each word
+for each word:
+check if the word or the tag is longer. if equal, end. check the difference of the lengths, and move the shorter string (difference / 2) spaces forward.
+then, add 2 spaces after the end of the longer string, and begin anew in that position on both output strings
+         */
 
+    }
+    private static String createWordCardTag(final WordCard wordCard, final int index, final ViewingState viewingState) {
+        Set<Team> teams = engine.getCurrentGameStructure().getTeams();
+        String wordCardTag = "[" + index + "]";
+        if (viewingState == ViewingState.OpenView || wordCard.isFound()) {
+            if (viewingState == ViewingState.HiddenView) {
+                wordCardTag += " V";
+            }
+            else {
+                wordCardTag += " " + (wordCard.isFound() ? "V" : "X");
+            }
+            if (teams.contains(wordCard.getTeam())) {
+                wordCardTag += " (" + wordCard.getTeam().getName() + ")";
+            }
+            else if (wordCard.isBlackWord()){
+                wordCardTag += " (BLACK)";
+            }
+        }
+        return wordCardTag;
     }
     private static void beginGameInstance() {
         System.out.println("Beginning new game...");
@@ -98,8 +127,8 @@ public class ConsoleApplication {
         return userInputInt;
     }
     private static int presentMainMenu() {
-        List<Integer> allowedInputsWhenNotLoaded = new ArrayList<>(Arrays.asList(1, 2));
-        List<Integer> allowedInputsWhenLoaded = new ArrayList<>(Arrays.asList(1, 2, 3, 4));
+        List<Integer> allowedInputsWhenNotLoaded = IntStream.rangeClosed(1, 2).boxed().collect(Collectors.toList());
+        List<Integer> allowedInputsWhenLoaded = IntStream.rangeClosed(1, 4).boxed().collect(Collectors.toList());
         printMainMenu();
         return acceptIntInputFromUser(!(isGameStructureLoaded()) ? allowedInputsWhenNotLoaded : allowedInputsWhenLoaded, "Invalid key, please enter one of the following numbers to select your option:");
     }
@@ -125,7 +154,7 @@ public class ConsoleApplication {
         return engine.getCurrentGameStructure() != null;
     }
     private static boolean hasGameInstanceEnded() {
-        return engine.getCurrentGameInstanceData()
+        return engine.getCurrentGameInstanceData().getGameState() == GameState.Ended;
     }
     public static void printCurrentGameStructure() {
         final GameStructure gameStructure = engine.getCurrentGameStructure();
@@ -144,10 +173,10 @@ public class ConsoleApplication {
         teams.stream().forEach((team) -> {
             System.out.println("Team " + team.getName() + ", card amount: " + team.getCardCount());
         });
-        System.out.println("");
+        System.out.println();
     }
     public static void printCurrentGameInstance() {
-        GameInstanceData gameInstanceData = engine.getCurrentGameInstanceData();
+        final GameInstanceData gameInstanceData = engine.getCurrentGameInstanceData();
         if (gameInstanceData == null) {
             System.out.println("Game instance has not started yet.");
             return;

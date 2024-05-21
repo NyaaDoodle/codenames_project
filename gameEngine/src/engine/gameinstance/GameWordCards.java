@@ -7,7 +7,7 @@ import engine.gamestructure.Words;
 import java.util.*;
 
 public class GameWordCards {
-    private final static Team DEFAULT_VALUE_TEAM = new Team("", 0);
+    private final static Team NEUTRAL_TEAM = new Team("", 0);
     private final List<WordCard> wordCards = new ArrayList<>();
     private final Words wordBanks;
     private final Set<Team> teams;
@@ -36,7 +36,8 @@ public class GameWordCards {
             drawnGameWords.stream().skip(skipCount).limit(team.getCardCount()).forEach((word) -> wordCards.add(new WordCard(word, team, false)));
             skipCount += team.getCardCount();
         }
-        drawnBlackWords.stream().forEach((word) -> wordCards.add(new WordCard(word, DEFAULT_VALUE_TEAM, true)));
+        drawnGameWords.stream().skip(skipCount).forEach((word) -> wordCards.add(new WordCard(word, NEUTRAL_TEAM, false)));
+        drawnBlackWords.forEach((word) -> wordCards.add(new WordCard(word, NEUTRAL_TEAM, true)));
         Collections.shuffle(wordCards);
     }
 
