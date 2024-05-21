@@ -9,6 +9,8 @@ public class WordCard {
     private final Team team;
     private final boolean isBlackWord;
     private boolean found = false;
+    private int index;
+    private boolean indexSet = false;
 
     public WordCard(String word, Team team, boolean isBlackWord) {
         this.word = word;
@@ -32,6 +34,17 @@ public class WordCard {
 
     public void setFound(boolean found) {
         this.found = found;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        if (!indexSet) {
+            this.index = index;
+            indexSet = true;
+        }
     }
 
     @Override

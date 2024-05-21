@@ -39,6 +39,9 @@ public class GameWordCards {
         drawnGameWords.stream().skip(skipCount).forEach((word) -> wordCards.add(new WordCard(word, NEUTRAL_TEAM, false)));
         drawnBlackWords.forEach((word) -> wordCards.add(new WordCard(word, NEUTRAL_TEAM, true)));
         Collections.shuffle(wordCards);
+        for (int i = 0; i < wordCards.size(); i++) {
+            wordCards.get(i).setIndex(i);
+        }
     }
 
     private <E> Optional<E> getRandomMemberFromCollection(Collection<E> collection) {
