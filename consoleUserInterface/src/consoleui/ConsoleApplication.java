@@ -3,6 +3,8 @@ package consoleui;
 import engine.GameEngine;
 import engine.gameinstance.GameInstance;
 import engine.gameinstance.GameInstanceData;
+import engine.gameinstance.GameState;
+import engine.gameinstance.ViewingState;
 import engine.gamestructure.Board;
 import engine.gamestructure.GameStructure;
 import engine.gamestructure.Team;
@@ -28,7 +30,7 @@ public class ConsoleApplication {
                     loadGameStructure();
                 }
                 else {
-                    // Begin game
+                    beginGameInstance();
                 }
                 break;
             case 2:
@@ -52,6 +54,20 @@ public class ConsoleApplication {
             default:
                 break;
         }
+    }
+    private static void gameloop() {
+        GameInstanceData gameInstanceData = engine.getCurrentGameInstanceData();
+        while (gameInstanceData.getGameState() != GameState.Ended) {
+            printBoardState(gameInstanceData.getViewingState());
+            gameInstanceData = engine.getCurrentGameInstanceData();
+        }
+    }
+    private static void printBoardState(ViewingState viewingState) {
+
+    }
+    private static void beginGameInstance() {
+        System.out.println("Beginning new game...");
+        gameloop();
     }
     private static void loadGameStructure() {
         Scanner scanner = new Scanner(System.in);
@@ -107,6 +123,9 @@ public class ConsoleApplication {
     }
     private static boolean isGameStructureLoaded() {
         return engine.getCurrentGameStructure() != null;
+    }
+    private static boolean hasGameInstanceEnded() {
+        return engine.getCurrentGameInstanceData()
     }
     public static void printCurrentGameStructure() {
         final GameStructure gameStructure = engine.getCurrentGameStructure();

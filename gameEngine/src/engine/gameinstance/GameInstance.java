@@ -1,5 +1,6 @@
 package engine.gameinstance;
 
+import engine.GameEngine;
 import engine.gamestructure.GameStructure;
 import engine.gamestructure.Team;
 
@@ -11,8 +12,10 @@ public class GameInstance {
     private final GameWordCards wordCards;
     private final Map<Team, Integer> teamToScore = new HashMap<>();
     private final TurnOrder turnOrder;
-    private Hint currentHint;
+    private GameState gameState = GameState.Standby;
     private ViewingState viewingState = ViewingState.HiddenView;
+    private Hint currentHint;
+
     public GameInstance(final GameStructure gameStructure, final Queue<Team> turnOrder) {
         this.gameStructure = gameStructure;
         this.wordCards = new GameWordCards(gameStructure);
@@ -43,6 +46,10 @@ public class GameInstance {
 
     public TurnOrder getTurnOrder() {
         return turnOrder;
+    }
+
+    public GameState getGameState() {
+        return gameState;
     }
 
     public ViewingState getViewingState() {
