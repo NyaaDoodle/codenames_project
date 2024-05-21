@@ -8,21 +8,72 @@ import engine.gamestructure.GameStructure;
 import engine.gamestructure.Team;
 import engine.gamestructure.Words;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class ConsoleApplication {
     private static GameEngine engine = new GameEngine();
     private static int currentMenuIndex = 1;
     private static boolean toExitProgram = false;
     public static void main(String[] args) {
+        int currentUserInput;
         while (!(toExitProgram)) {
-            presentMainMenu();
+            currentUserInput = presentMainMenu();
+            selectActionMainMenu(currentUserInput);
         }
     }
-    private static void acceptUserInput() {}
-    private static void presentMainMenu() {
+    private static void selectActionMainMenu(final int input) {
+        switch (input) {
+            case 1:
+                if (!(isGameStructureLoaded())) {
+                    // Load XML prompt
+                }
+                else {
+                    // Begin game
+                }
+                break;
+            case 2:
+                if (!(isGameStructureLoaded())) {
+                    // Exit program
+                }
+                else {
+                    // Show game structure information
+                }
+                break;
+            case 3:
+                if (isGameStructureLoaded()) {
+                    // Load XML prompt
+                }
+                break;
+            case 4:
+                if (isGameStructureLoaded()) {
+                    // Exit program
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    private static int acceptIntInputFromUser(final List<Integer> acceptedInts, final String unexpectedInputMessage) {
+        int DEFAULT_VALUE = -1;
+        Scanner scanner = new Scanner(System.in);
+        int userInputInt = DEFAULT_VALUE;
+        boolean isValidInputAccepted = false;
+        while (!(isValidInputAccepted)) {
+            userInputInt = scanner.nextInt();
+            if (acceptedInts.contains(userInputInt)) {
+                isValidInputAccepted = true;
+            }
+            else {
+                System.out.println(unexpectedInputMessage + " " + acceptedInts);
+            }
+        }
+        return userInputInt;
+    }
+    private static int presentMainMenu() {
+        List<Integer> allowedInputsWhenNotLoaded = new ArrayList<>(Arrays.asList(1, 2));
+        List<Integer> allowedInputsWhenLoaded = new ArrayList<>(Arrays.asList(1, 2, 3, 4));
         printMainMenu();
+        return acceptIntInputFromUser(!(isGameStructureLoaded()) ? allowedInputsWhenNotLoaded : allowedInputsWhenLoaded, "Invalid key, please enter one of the following numbers to select your option:");
     }
     private static void printMainMenu() {
         currentMenuIndex = 1;
