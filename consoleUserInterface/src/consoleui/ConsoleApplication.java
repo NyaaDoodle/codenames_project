@@ -25,7 +25,7 @@ public class ConsoleApplication {
         switch (input) {
             case 1:
                 if (!(isGameStructureLoaded())) {
-                    // Load XML prompt
+                    loadGameStructure();
                 }
                 else {
                     // Begin game
@@ -33,28 +33,40 @@ public class ConsoleApplication {
                 break;
             case 2:
                 if (!(isGameStructureLoaded())) {
-                    // Exit program
+                    toExitProgram = true;
                 }
                 else {
-                    // Show game structure information
+                    printCurrentGameStructure();
                 }
                 break;
             case 3:
                 if (isGameStructureLoaded()) {
-                    // Load XML prompt
+                    loadGameStructure();
                 }
                 break;
             case 4:
                 if (isGameStructureLoaded()) {
-                    // Exit program
+                    toExitProgram = true;
                 }
                 break;
             default:
                 break;
         }
     }
+    private static void loadGameStructure() {
+        Scanner scanner = new Scanner(System.in);
+        Collection<String> allowedFileFormats = new HashSet<>(Arrays.asList(".xml"));
+        System.out.println("Write the full path of the game format file: (Supported file types: " + allowedFileFormats + ") ");
+        String userInput = scanner.nextLine();
+        try {
+            engine.readFromGameStructureFile(userInput);
+        } catch (Exception e) {
+            // Placeholder, currently assuming "happy path"
+            System.exit(-1);
+        }
+    }
     private static int acceptIntInputFromUser(final List<Integer> acceptedInts, final String unexpectedInputMessage) {
-        int DEFAULT_VALUE = -1;
+        final int DEFAULT_VALUE = -1;
         Scanner scanner = new Scanner(System.in);
         int userInputInt = DEFAULT_VALUE;
         boolean isValidInputAccepted = false;
@@ -96,37 +108,31 @@ public class ConsoleApplication {
     private static boolean isGameStructureLoaded() {
         return engine.getCurrentGameStructure() != null;
     }
-    public static void testingMain() {
-        xmlLoadTest("gameEngine/test-files/classic.xml");
-        printCurrentGameStructure(engine.getCurrentGameStructure());
-        engine.beginGame();
-        System.out.println(engine.getCurrentGameInstanceData().getWordCards().getWordCardList());
-    }
-    public static void xmlLoadTest(String fileName) {
-        try {
-            engine.readFromGameStructureFile(fileName);
+    public static void printCurrentGameStructure() {
+        final GameStructure gameStructure = engine.getCurrentGameStructure();
+        if (gameStructure == null) {
+            System.out.println("Game structure has not been loaded yet.");
+            return;
         }
-        catch (Exception e) {
-            System.out.println("aaaaaaaaaaaa");
-        }
-    }
-    public static void printCurrentGameStructure(GameStructure gameStructure) {
-        if (gameStructure == null) { return; }
         final Words words = gameStructure.getWords();
-        System.out.println(words.getGameWords());
-        System.out.println(words.getBlackWords());
         final Board board = gameStructure.getBoard();
-        System.out.println(board.getCardCount());
-        System.out.println(board.getBlackCardCount());
-        System.out.println(board.getRows());
-        System.out.println(board.getColumns());
         final Set<Team> teams = gameStructure.getTeams();
-        for (Team team : teams) {
-            System.out.println(team.getName() + ", " + team.getCardCount());
-        }
+        System.out.println("Amount of possible game words in word bank: " + words.getGameWords().size());
+        System.out.println("Amount of possible black words in word bank: " + words.getBlackWords().size());
+        System.out.println("Amount of regular words in a game: " + board.getCardCount());
+        System.out.println("Amount of black words in a game: " + board.getBlackCardCount());
+        System.out.println("Playing teams:");
+        teams.stream().forEach((team) -> {
+            System.out.println("Team " + team.getName() + ", card amount: " + team.getCardCount());
+        });
+        System.out.println("");
     }
-    public static void printCurrentGameInstance(GameInstanceData gameInstanceData) {
-        if (gameInstanceData == null) { return; }
+    public static void printCurrentGameInstance() {
+        GameInstanceData gameInstanceData = engine.getCurrentGameInstanceData();
+        if (gameInstanceData == null) {
+            System.out.println("Game instance has not started yet.");
+            return;
+        }
         System.out.println(gameInstanceData);
     }
 }
