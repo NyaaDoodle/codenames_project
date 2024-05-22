@@ -44,8 +44,7 @@ public class GameEngine implements CodenamesEngine {
 
     @Override
     public void beginGame() {
-        Queue<Team> nullqueue = new LinkedList<>();
-        gameInstance = new GameInstance(gameStructure, nullqueue);
+        gameInstance = new GameInstance(gameStructure, new LinkedList<>(gameStructure.getTeams()));
         
     }
 

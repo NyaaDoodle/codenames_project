@@ -55,11 +55,33 @@ public class ConsoleApplication {
                 break;
         }
     }
-    private static void gameloop() {
+    private static void beginTurn() {
+
+    }
+    private static void selectActionStandbyMenu(final int input) {
+        switch (input) {
+            case 1:
+                beginTurn();
+                break;
+            case 2:
+                printCurrentGameInstance();
+                break;
+            case 3:
+                beginGameInstance();
+                break;
+            case 4:
+                loadGameStructure();
+                break;
+            case 5:
+                toExitProgram = true;
+                break;
+        }
+    }
+    private static void gameLoop() {
         while (instanceData.getGameState() != GameState.Ended) {
             printStandbyMenu();
-
-            //gameInstanceData = engine.getCurrentGameInstanceData();
+            int userInput = acceptIntInputFromUser(IntStream.rangeClosed(1, 5).boxed().collect(Collectors.toList()));
+            selectActionStandbyMenu(userInput);
         }
     }
     private static void updateCurrentGameStructure() {
@@ -123,7 +145,7 @@ then, add 2 spaces after the end of the longer string, and begin anew in that po
         System.out.println("Beginning new game...");
         engine.beginGame();
         updateCurrentGameInstanceData();
-        gameloop();
+        gameLoop();
     }
     private static void loadGameStructure() {
         Scanner scanner = new Scanner(System.in);
@@ -138,7 +160,7 @@ then, add 2 spaces after the end of the longer string, and begin anew in that po
         }
         updateCurrentGameStructure();
     }
-    private static int acceptIntInputFromUser(final List<Integer> acceptedInts, final String unexpectedInputMessage) {
+    private static int acceptIntInputFromUser(final List<Integer> acceptedInts) {
         final int DEFAULT_VALUE = -1;
         Scanner scanner = new Scanner(System.in);
         int userInputInt = DEFAULT_VALUE;
@@ -149,7 +171,7 @@ then, add 2 spaces after the end of the longer string, and begin anew in that po
                 isValidInputAccepted = true;
             }
             else {
-                System.out.println(unexpectedInputMessage + " " + acceptedInts);
+                System.out.println("Invalid key, please enter one of the following numbers to select your option: " + acceptedInts);
             }
         }
         return userInputInt;
@@ -158,7 +180,7 @@ then, add 2 spaces after the end of the longer string, and begin anew in that po
         List<Integer> allowedInputsWhenNotLoaded = IntStream.rangeClosed(1, 2).boxed().collect(Collectors.toList());
         List<Integer> allowedInputsWhenLoaded = IntStream.rangeClosed(1, 4).boxed().collect(Collectors.toList());
         printMainMenu();
-        return acceptIntInputFromUser(!(isGameStructureLoaded()) ? allowedInputsWhenNotLoaded : allowedInputsWhenLoaded, "Invalid key, please enter one of the following numbers to select your option:");
+        return acceptIntInputFromUser(!(isGameStructureLoaded()) ? allowedInputsWhenNotLoaded : allowedInputsWhenLoaded);
     }
     private static void printMainMenu() {
         System.out.println("Codenames, Version 1");
