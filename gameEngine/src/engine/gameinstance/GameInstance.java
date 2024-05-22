@@ -13,6 +13,7 @@ public class GameInstance {
     private final TurnOrder turnOrder;
     private Hint currentHint;
     private boolean hasGameEnded = false;
+    private Team teamWon;
 
     public GameInstance(final GameStructure gameStructure, final Queue<Team> turnOrder) {
         this.gameStructure = gameStructure;
@@ -52,5 +53,35 @@ public class GameInstance {
 
     public void moveToNextTurn() {
         turnOrder.moveToNextTurn();
+    }
+
+    public MoveEvent makeMove(final int wordIndex) {
+        MoveEvent moveEvent;
+        WordCard selectedWord = getWordCards().getWordCardList().get(wordIndex);
+        Team cardTeam = selectedWord.getTeam();
+        selectedWord.setFound(true);
+        if (gameStructure.getTeams().contains(cardTeam)) {
+            teamToScore.put(cardTeam, teamToScore.get(cardTeam) + 1);
+            moveEvent = cardTeam.equals(turnOrder.getCurrentTurn()) ? MoveEvent.CardBelongingToCurrentTeam : MoveEvent.CardBelongingToOtherTeam;
+            if (teamToScore.get(cardTeam).equals(cardTeam.getCardCount())) {
+                hasGameEnded = true;
+                teamWon = cardTeam;
+            }
+        }
+        else if (selectedWord.isBlackWord()) {
+            hasGameEnded = true;
+            teamWon = turnOrder.getNextTurn(); // only applicable for 2 teams
+            moveEvent = MoveEvent.BlackWord;
+        }
+        else {
+            moveEvent = MoveEvent.NeutralWord;
+        }
+        return moveEvent;
+    }
+    public Team getTeamWon() {
+        if (hasGameEnded) {
+            return teamWon;
+        }
+        return null;
     }
 }

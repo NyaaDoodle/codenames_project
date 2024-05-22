@@ -12,6 +12,7 @@ public class GameInstanceData {
     private final TurnOrder turnOrder;
     private final Hint currentHint;
     private final boolean hasGameEnded;
+    private final Team teamWon;
 
     public GameInstanceData(GameInstance gameInstance) {
         this.gameStructure = gameInstance.getGameStructure();
@@ -20,6 +21,7 @@ public class GameInstanceData {
         this.turnOrder = gameInstance.getTurnOrder();
         this.currentHint = gameInstance.getCurrentHint();
         this.hasGameEnded = gameInstance.hasGameEnded();
+        this.teamWon = gameInstance.getTeamWon();
     }
 
     public GameStructure getGameStructure() {
@@ -52,5 +54,9 @@ public class GameInstanceData {
 
     public Team getNextTurn() {
         return turnOrder.getNextTurn();
+    }
+
+    public Team getTeamWon() {
+        return teamWon;
     }
 }

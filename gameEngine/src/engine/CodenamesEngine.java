@@ -2,6 +2,7 @@ package engine;
 
 import engine.gameinstance.GameInstanceData;
 import engine.gameinstance.Hint;
+import engine.gameinstance.MoveEvent;
 import engine.gamestructure.GameStructure;
 
 public interface CodenamesEngine {
@@ -10,7 +11,7 @@ public interface CodenamesEngine {
     public void beginGame();
     public void beginTurn();
     public void setCurrentHint(final Hint newHint);
-    public void makeMove(final int wordIndex);
+    public MoveEvent makeMove(final int wordIndex);
     public GameInstanceData getCurrentGameInstanceData();
     public void endGame();
 }

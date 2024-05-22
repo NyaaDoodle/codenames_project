@@ -3,6 +3,7 @@ package engine;
 import engine.gameinstance.GameInstance;
 import engine.gameinstance.GameInstanceData;
 import engine.gameinstance.Hint;
+import engine.gameinstance.MoveEvent;
 import engine.gamestructure.GameStructure;
 import engine.gamestructure.Team;
 import engine.jaxb.generated.JAXBConversion;
@@ -60,8 +61,8 @@ public class GameEngine implements CodenamesEngine {
     }
 
     @Override
-    public void makeMove(final int wordIndex) {
-
+    public MoveEvent makeMove(final int wordIndex) {
+        return gameInstance.makeMove(wordIndex);
     }
 
     @Override

@@ -18,7 +18,7 @@ public class ConsoleApplication {
     private static boolean toExitProgram = false;
     public static void main(String[] args) {
         int currentUserInput;
-        while (!(toExitProgram)) {
+        while (!toExitProgram) {
             currentUserInput = presentMainMenu();
             selectActionMainMenu(currentUserInput);
         }
@@ -75,14 +75,40 @@ public class ConsoleApplication {
         System.out.println("Hint: " + currentHint.getHintWords() + ", number: " + currentHint.getNumber());
         for (int i = 0; i < currentHint.getNumber() && !stopGuessingEarlier && !gameEnded; i++) {
             System.out.println("Enter a number corresponding to a word to select that word: (write \"end\" to prematurely end the turn)");
-            int guessInput = acceptIntInputFromUser(IntStream.rangeClosed(1, gameStructure.getTotalCardsInGame()).boxed().collect(Collectors.toList()), "end");
+            int guessInput = acceptGuessInputFromUser();
             if (guessInput != STOP_INT) {
-                engine.makeMove(guessInput);
+                MoveEvent moveEvent = engine.makeMove(guessInput - 1);
                 updateCurrentGameInstanceData();
+                gameEnded = instanceData.hasGameEnded();
+                printMoveEvent(moveEvent);
             }
             else {
                 stopGuessingEarlier = true;
             }
+        }
+        if (!gameEnded) {
+            System.out.println("Team " + currentTurnTeam.getName() + "'s score: (" + instanceData.getTeamToScore().get(currentTurnTeam) + "/" + currentTurnTeam.getCardCount() + ")");
+        }
+        else {
+            System.out.println("The game has ended, and the winning team is Team " + instanceData.getTeamWon().getName() + "! Congratulations!");
+        }
+    }
+    private static void printMoveEvent(MoveEvent moveEvent) {
+        switch (moveEvent) {
+            case CardBelongingToCurrentTeam:
+                System.out.println("That card belonged to the current team, and gave you one point!");
+                break;
+            case CardBelongingToOtherTeam:
+                System.out.println("That card belonged to the *other* team, and gave them one point.");
+                break;
+            case BlackWord:
+                System.out.println("That card was a black word!! The other team has won.");
+                break;
+            case NeutralWord:
+                System.out.println("That card was a neutral word, so no points were given to anyone.");
+                break;
+            default:
+                break;
         }
     }
     private static void selectActionStandbyMenu(final int input) {
@@ -105,7 +131,7 @@ public class ConsoleApplication {
         }
     }
     private static void gameLoop() {
-        while (!instanceData.hasGameEnded()) {
+        while (!hasGameInstanceEnded()) {
             printStandbyMenu();
             int userInput = acceptIntInputFromUser(IntStream.rangeClosed(1, 5).boxed().collect(Collectors.toList()));
             selectActionStandbyMenu(userInput);
@@ -176,8 +202,7 @@ then, add 2 spaces after the end of the longer string, and begin anew in that po
     }
     private static void loadGameStructure() {
         Scanner scanner = new Scanner(System.in);
-        Collection<String> allowedFileFormats = new HashSet<>(Arrays.asList(".xml"));
-        System.out.println("Write the full path of the game format file: (Supported file types: " + allowedFileFormats + ") ");
+        System.out.println("Write the full path of the game format file: (Supported file types: .xml");
         String userInput = scanner.nextLine();
         try {
             engine.readFromGameStructureFile(userInput);
@@ -218,7 +243,7 @@ then, add 2 spaces after the end of the longer string, and begin anew in that po
                 if (acceptedIntegers.contains(userInputInt)) {
                     isValidInputAccepted = true;
                 } else {
-                    System.out.println("Invalid key, please enter one of the following numbers to select your option: " + acceptedInts);
+                    System.out.println("Invalid key, please enter one of the following numbers to select your option: " + acceptedIntegers);
                 }
             }
             catch (InputMismatchException ime) {
@@ -227,27 +252,32 @@ then, add 2 spaces after the end of the longer string, and begin anew in that po
         }
         return userInputInt;
     }
-    private static int acceptIntInputFromUser(final List<Integer> acceptedIntegers, final String terminatingString) {
-        final int DEFAULT_VALUE = -1;
+    private static int acceptGuessInputFromUser() {
+        final int STOP_VALUE = -1;
+        final String STOP_STRING = "end";
         Scanner scanner = new Scanner(System.in);
-        int userInputInt = DEFAULT_VALUE;
         String rawUserInput;
+        int userInputInt = STOP_VALUE;
         boolean isValidInputAccepted = false;
-        while (!(isValidInputAccepted)) {
+        List<WordCard> wordCards = instanceData.getWordCards().getWordCardList();
+        List<Integer> acceptedIntegers = new ArrayList<>();
+        wordCards.stream().filter(wordCard -> !wordCard.isFound()).forEach(wordCard -> acceptedIntegers.add(wordCard.getIndex() + 1));
+        while (!isValidInputAccepted) {
             rawUserInput = scanner.nextLine();
-            if (rawUserInput.toLowerCase().equals(terminatingString)) {
-                return DEFAULT_VALUE;
-            } else {
+            if (rawUserInput.equalsIgnoreCase(STOP_STRING)) {
+                return STOP_VALUE;
+            }
+            else {
                 try {
                     userInputInt = Integer.parseInt(rawUserInput);
                     if (acceptedIntegers.contains(userInputInt)) {
                         isValidInputAccepted = true;
                     } else {
-                        System.out.println("Invalid number, please enter one of the following numbers to select your option: " + acceptedIntegers);
+                        System.out.println("Invalid key, please enter a number for a card not yet revealed.");
                     }
                 }
                 catch (NumberFormatException nfe) {
-                    System.out.println("Invalid input: not a number, please enter a number or \"" + terminatingString + "\"to stop.");
+                    System.out.println("Invalid input, please enter a number or \"" + STOP_STRING + "\" to stop.");
                 }
             }
         }
@@ -292,9 +322,7 @@ then, add 2 spaces after the end of the longer string, and begin anew in that po
         System.out.println("Amount of regular words in a game: " + board.getCardCount());
         System.out.println("Amount of black words in a game: " + board.getBlackCardCount());
         System.out.println("Playing teams:");
-        teams.forEach(team -> {
-            System.out.println("Team " + team.getName() + ", card amount: " + team.getCardCount());
-        });
+        teams.forEach(team -> System.out.println("Team " + team.getName() + ", card amount: " + team.getCardCount()));
         System.out.println();
     }
     private static void printCurrentGameInstance() {
