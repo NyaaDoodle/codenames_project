@@ -13,8 +13,8 @@ import java.util.stream.IntStream;
 
 public class ConsoleApplication {
     private static final GameEngine engine = new GameEngine();
-    private static GameStructure currentGameStructure;
-    private static GameInstanceData currentGameInstanceData;
+    private static GameStructure gameStructure;
+    private static GameInstanceData instanceData;
     private static boolean toExitProgram = false;
     public static void main(String[] args) {
         int currentUserInput;
@@ -56,30 +56,29 @@ public class ConsoleApplication {
         }
     }
     private static void gameloop() {
-        while (currentGameInstanceData.getGameState() != GameState.Ended) {
+        while (instanceData.getGameState() != GameState.Ended) {
             printStandbyMenu();
 
             //gameInstanceData = engine.getCurrentGameInstanceData();
         }
     }
     private static void updateCurrentGameStructure() {
-        currentGameStructure = engine.getCurrentGameStructure();
+        gameStructure = engine.getCurrentGameStructure();
     }
     private static void updateCurrentGameInstanceData() {
-        currentGameInstanceData = engine.getCurrentGameInstanceData();
+        instanceData = engine.getCurrentGameInstanceData();
     }
     private static void printStandbyMenu() {
-        int currentMenuIndex = 1;
-        printBoardState(currentGameInstanceData.getViewingState());
-        System.out.println("It is Team " + currentGameInstanceData.getTurnOrder().getCurrentTurn().getName() + "'s turn");
-        System.out.println("(" + currentMenuIndex++ + ") " + "Begin turn");
-        System.out.println("(" + currentMenuIndex++ + ") " + "Show current game information");
-        System.out.println("(" + currentMenuIndex++ + ") " + "Recreate new game");
-        System.out.println("(" + currentMenuIndex++ + ") " + "Load new game format");
-        System.out.println("(" + currentMenuIndex + ") " + "Exit program");
+        printBoardState(instanceData.getViewingState());
+        System.out.println("Next turn: Team " + instanceData.getTurnOrder().getNextTurn().getName());
+        System.out.println("(1) Begin turn");
+        System.out.println("(2) Show current game information");
+        System.out.println("(3) Recreate new game");
+        System.out.println("(4) Load new game format");
+        System.out.println("(5) Exit program");
     }
     private static void printBoardState(final ViewingState viewingState) {
-        final Board board = currentGameStructure.getBoard();
+        final Board board = gameStructure.getBoard();
         final int boardRows = board.getRows();
         final int boardColumns = board.getColumns();
         final int totalCards = board.getCardCount() + board.getBlackCardCount();
@@ -162,18 +161,17 @@ then, add 2 spaces after the end of the longer string, and begin anew in that po
         return acceptIntInputFromUser(!(isGameStructureLoaded()) ? allowedInputsWhenNotLoaded : allowedInputsWhenLoaded, "Invalid key, please enter one of the following numbers to select your option:");
     }
     private static void printMainMenu() {
-        int currentMenuIndex = 1;
         System.out.println("Codenames, Version 1");
         System.out.println("Choose a number to select an option:");
         if (!(isGameStructureLoaded())) {
-            System.out.println("(" + currentMenuIndex++ + ") " + "Load game format");
-            System.out.println("(" + currentMenuIndex + ") " + "Exit program");
+            System.out.println("(1) Load game format");
+            System.out.println("(2) Exit program");
         }
         else {
-            System.out.println("(" + currentMenuIndex++ + ") " + "Start a new game");
-            System.out.println("(" + currentMenuIndex++ + ") " + "Show loaded game format information");
-            System.out.println("(" + currentMenuIndex++ + ") " + "Load a different game format");
-            System.out.println("(" + currentMenuIndex + ") " + "Exit program");
+            System.out.println("(1) Start a new game");
+            System.out.println("(2) Show loaded game format information");
+            System.out.println("(3) Load a different game format");
+            System.out.println("(4) Exit program");
         }
     }
     private static boolean isGameStructureLoaded() {
@@ -182,30 +180,37 @@ then, add 2 spaces after the end of the longer string, and begin anew in that po
     private static boolean hasGameInstanceEnded() {
         return engine.getCurrentGameInstanceData().getGameState() == GameState.Ended;
     }
-    public static void printCurrentGameStructure() {
-        if (currentGameStructure == null) {
+    private static void printCurrentGameStructure() {
+        if (gameStructure == null) {
             System.out.println("Game structure has not been loaded yet.");
             return;
         }
-        final Words words = currentGameStructure.getWords();
-        final Board board = currentGameStructure.getBoard();
-        final Set<Team> teams = currentGameStructure.getTeams();
+        final Words words = gameStructure.getWords();
+        final Board board = gameStructure.getBoard();
+        final Set<Team> teams = gameStructure.getTeams();
         System.out.println("Amount of possible game words in word bank: " + words.getGameWords().size());
         System.out.println("Amount of possible black words in word bank: " + words.getBlackWords().size());
         System.out.println("Amount of regular words in a game: " + board.getCardCount());
         System.out.println("Amount of black words in a game: " + board.getBlackCardCount());
         System.out.println("Playing teams:");
-        teams.stream().forEach((team) -> {
+        teams.forEach(team -> {
             System.out.println("Team " + team.getName() + ", card amount: " + team.getCardCount());
         });
         System.out.println();
     }
-    public static void printCurrentGameInstance() {
-        currentGameInstanceData = engine.getCurrentGameInstanceData();
-        if (currentGameInstanceData == null) {
+    private static void printCurrentGameInstance() {
+        if (instanceData == null) {
             System.out.println("Game instance has not started yet.");
             return;
         }
-        System.out.println(currentGameInstanceData);
+        Map<Team, Integer> teamToScore = instanceData.getTeamToScore();
+        Map<Team, Integer> teamToTurnCount = instanceData.getTurnOrder().getTeamToTurnCount();
+        printBoardState(instanceData.getViewingState());
+        for (Team team : gameStructure.getTeams()) {
+            System.out.println("Team " + team.getName());
+            System.out.println("Score: (" + teamToScore.get(team) + "/" + team.getCardCount() + ")");
+            System.out.println("Turn count: " + teamToTurnCount.get(team));
+        }
+        System.out.println("Next turn: Team " + instanceData.getTurnOrder().getNextTurn().getName());
     }
 }
