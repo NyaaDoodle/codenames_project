@@ -23,20 +23,8 @@ public class GameEngine implements CodenamesEngine {
     public GameEngine() {}
 
     @Override
-    public void readFromGameStructureFile(final String fileName) throws Exception {
-        try (InputStream inputStream = Files.newInputStream(Paths.get(fileName));) {
-            gameStructure = JAXBConversion.XMLToObjectsConversion(inputStream);
-        }
-        catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
-        catch (JAXBException je) {
-            je.printStackTrace();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-
-        }
+    public void readFromGameStructureFile(final InputStream fileInputStream) throws JAXBException {
+        gameStructure = JAXBConversion.XMLToObjectsConversion(fileInputStream);
     }
 
     @Override
@@ -47,7 +35,6 @@ public class GameEngine implements CodenamesEngine {
     @Override
     public void beginGame() {
         gameInstance = new GameInstance(gameStructure, new LinkedList<>(gameStructure.getTeams()));
-        
     }
 
     @Override
@@ -70,6 +57,8 @@ public class GameEngine implements CodenamesEngine {
 
     @Override
     public void endGame() {
-
+        if (gameInstance.hasGameEnded()) {
+            gameInstance = null;
+        }
     }
 }

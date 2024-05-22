@@ -7,6 +7,11 @@ import engine.gamestructure.GameStructure;
 import engine.gamestructure.Team;
 import engine.gamestructure.Words;
 
+import javax.xml.bind.JAXBException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -21,6 +26,26 @@ public class ConsoleApplication {
         while (!toExitProgram) {
             currentUserInput = presentMainMenu();
             selectActionMainMenu(currentUserInput);
+        }
+    }
+    private static int presentMainMenu() {
+        List<Integer> allowedInputsWhenNotLoaded = IntStream.rangeClosed(1, 2).boxed().collect(Collectors.toList());
+        List<Integer> allowedInputsWhenLoaded = IntStream.rangeClosed(1, 4).boxed().collect(Collectors.toList());
+        printMainMenu();
+        return acceptMenuInputFromUser(!(isGameStructureLoaded()) ? allowedInputsWhenNotLoaded : allowedInputsWhenLoaded);
+    }
+    private static void printMainMenu() {
+        System.out.println("Codenames, Version 1");
+        System.out.println("Choose a number to select an option:");
+        if (!(isGameStructureLoaded())) {
+            System.out.println("(1) Load game format");
+            System.out.println("(2) Exit program");
+        }
+        else {
+            System.out.println("(1) Start a new game");
+            System.out.println("(2) Show loaded game format information");
+            System.out.println("(3) Load a different game format");
+            System.out.println("(4) Exit program");
         }
     }
     private static void selectActionMainMenu(final int input) {
@@ -52,6 +77,144 @@ public class ConsoleApplication {
                 }
                 break;
             default:
+                break;
+        }
+    }
+    private static void updateCurrentGameStructure() {
+        gameStructure = engine.getCurrentGameStructure();
+    }
+    private static void updateCurrentGameInstanceData() {
+        instanceData = engine.getCurrentGameInstanceData();
+    }
+    private static void loadGameStructure() {
+        Scanner scanner = new Scanner(System.in);
+        String userInput;
+        boolean isValidInputAccepted = false;
+        System.out.println("Write the full path of the game format file: (Supported file types: .xml");
+        while (!isValidInputAccepted) {
+            userInput = scanner.nextLine();
+            if (userInput.endsWith(".xml")) {
+                try (InputStream inputStream = Files.newInputStream(Paths.get(userInput))) {
+                    engine.readFromGameStructureFile(inputStream);
+                    isValidInputAccepted = true;
+                } catch (IOException ioe) {
+                    System.out.println("Input specified is not a file or does not exist. Please enter a valid game format file with its full path.");
+                }
+                catch (JAXBException je) {
+                    System.out.println("Invalid XML file according to schema-layout. Please correct the file to fit the schema requirements.");
+                    System.out.println(je.toString());
+                }
+            }
+            else {
+                System.out.println("Input specified is not of the correct file type. Please enter a valid game format file ending in \".xml\".");
+            }
+        }
+        updateCurrentGameStructure();
+        System.out.println("The game format file was loaded successfully!");
+        System.out.println();
+    }
+    private static boolean isGameStructureLoaded() {
+        return gameStructure != null;
+    }
+    private static void printCurrentGameStructure() {
+        if (gameStructure == null) {
+            System.out.println("Game structure has not been loaded yet.");
+            return;
+        }
+        final Words words = gameStructure.getWords();
+        final Board board = gameStructure.getBoard();
+        final Set<Team> teams = gameStructure.getTeams();
+        System.out.println("Amount of possible game words in word bank: " + words.getGameWords().size());
+        System.out.println("Amount of possible black words in word bank: " + words.getBlackWords().size());
+        System.out.println("Amount of regular words in a game: " + board.getCardCount());
+        System.out.println("Amount of black words in a game: " + board.getBlackCardCount());
+        System.out.println("Playing teams:");
+        teams.forEach(team -> System.out.println("Team " + team.getName() + ", card amount: " + team.getCardCount()));
+        System.out.println();
+    }
+    private static void beginGameInstance() {
+        System.out.println("Beginning new game...");
+        engine.beginGame();
+        updateCurrentGameInstanceData();
+        gameLoop();
+    }
+    private static void gameLoop() {
+        while (!hasGameInstanceEnded() && !toExitProgram) {
+            printStandbyMenu();
+            int userInput = acceptMenuInputFromUser(IntStream.rangeClosed(1, 5).boxed().collect(Collectors.toList()));
+            selectActionStandbyMenu(userInput);
+        }
+    }
+    private static void printStandbyMenu() {
+        printBoardState(ViewingState.HiddenView);
+        System.out.println("Next turn: Team " + instanceData.getTurnOrder().getNextTurn().getName());
+        System.out.println("(1) Begin turn");
+        System.out.println("(2) Show current game information");
+        System.out.println("(3) Recreate new game");
+        System.out.println("(4) Load new game format");
+        System.out.println("(5) Exit program");
+    }
+    private static void printBoardState(final ViewingState viewingState) {
+        final Board board = gameStructure.getBoard();
+        final int boardRows = board.getRows();
+        final int boardColumns = board.getColumns();
+        final int totalCards = board.getCardCount() + board.getBlackCardCount();
+        final List<WordCard> wordCards = engine.getCurrentGameInstanceData().getWordCards().getWordCardList();
+        for (int i = 0; (i < boardRows) && (i*boardColumns < totalCards); i++) {
+            List<WordCard> currentLineList = wordCards.stream().skip((long)i*boardColumns).limit(boardColumns).collect(Collectors.toList());
+            currentLineList.forEach(wordCard -> System.out.print(wordCard.getWord() + "  "));
+            System.out.println();
+            currentLineList.forEach(wordCard -> System.out.print(createWordCardTag(wordCard, viewingState) + "  "));
+            System.out.println();
+        }
+        /*
+     encapsulation
+[1] X (My team and such)
+required space: 2 spaces between each word
+for each word:
+check if the word or the tag is longer. if equal, end. check the difference of the lengths, and move the shorter string (difference / 2) spaces forward.
+then, add 2 spaces after the end of the longer string, and begin anew in that position on both output strings
+         */
+
+    }
+    private static String createWordCardTag(final WordCard wordCard, final ViewingState viewingState) {
+        Set<Team> teams = engine.getCurrentGameStructure().getTeams();
+        String wordCardTag = "[" + (wordCard.getIndex() + 1) + "]";
+        if (viewingState == ViewingState.OpenView || wordCard.isFound()) {
+            if (viewingState == ViewingState.HiddenView) {
+                wordCardTag += " V";
+            }
+            else {
+                wordCardTag += " " + (wordCard.isFound() ? "V" : "X");
+            }
+            if (teams.contains(wordCard.getTeam())) {
+                wordCardTag += " (" + wordCard.getTeam().getName() + ")";
+            }
+            else if (wordCard.isBlackWord()){
+                wordCardTag += " (BLACK)";
+            }
+        }
+        return wordCardTag;
+    }
+    private static boolean hasGameInstanceEnded() {
+        return instanceData.hasGameEnded();
+    }
+    private static void selectActionStandbyMenu(final int input) {
+        switch (input) {
+            case 1:
+                beginTurn();
+                break;
+            case 2:
+                printCurrentGameInstance();
+                break;
+            case 3:
+                beginGameInstance();
+                break;
+            case 4:
+                loadGameStructure();
+                break;
+            case 5:
+                toExitProgram = true;
                 break;
         }
     }
@@ -111,106 +274,26 @@ public class ConsoleApplication {
                 break;
         }
     }
-    private static void selectActionStandbyMenu(final int input) {
-        switch (input) {
-            case 1:
-                beginTurn();
-                break;
-            case 2:
-                printCurrentGameInstance();
-                break;
-            case 3:
-                beginGameInstance();
-                break;
-            case 4:
-                loadGameStructure();
-                break;
-            case 5:
-                toExitProgram = true;
-                break;
-        }
-    }
-    private static void gameLoop() {
-        while (!hasGameInstanceEnded()) {
-            printStandbyMenu();
-            int userInput = acceptIntInputFromUser(IntStream.rangeClosed(1, 5).boxed().collect(Collectors.toList()));
-            selectActionStandbyMenu(userInput);
-        }
-    }
-    private static void updateCurrentGameStructure() {
-        gameStructure = engine.getCurrentGameStructure();
-    }
-    private static void updateCurrentGameInstanceData() {
-        instanceData = engine.getCurrentGameInstanceData();
-    }
-    private static void printStandbyMenu() {
-        printBoardState(ViewingState.HiddenView);
-        System.out.println("Next turn: Team " + instanceData.getTurnOrder().getNextTurn().getName());
-        System.out.println("(1) Begin turn");
-        System.out.println("(2) Show current game information");
-        System.out.println("(3) Recreate new game");
-        System.out.println("(4) Load new game format");
-        System.out.println("(5) Exit program");
-    }
-    private static void printBoardState(final ViewingState viewingState) {
-        final Board board = gameStructure.getBoard();
-        final int boardRows = board.getRows();
-        final int boardColumns = board.getColumns();
-        final int totalCards = board.getCardCount() + board.getBlackCardCount();
-        final List<WordCard> wordCards = engine.getCurrentGameInstanceData().getWordCards().getWordCardList();
-        for (int i = 0; (i < boardRows) && (i*boardColumns < totalCards); i++) {
-            List<WordCard> currentLineList = wordCards.stream().skip((long)i*boardColumns).limit(boardColumns).collect(Collectors.toList());
-            currentLineList.forEach(wordCard -> System.out.print(wordCard.getWord() + "  "));
-            System.out.println();
-            currentLineList.forEach(wordCard -> System.out.print(createWordCardTag(wordCard, viewingState) + "  "));
-            System.out.println();
-        }
-        /*
-     encapsulation
-[1] X (My team and such)
-required space: 2 spaces between each word
-for each word:
-check if the word or the tag is longer. if equal, end. check the difference of the lengths, and move the shorter string (difference / 2) spaces forward.
-then, add 2 spaces after the end of the longer string, and begin anew in that position on both output strings
-         */
-
-    }
-    private static String createWordCardTag(final WordCard wordCard, final ViewingState viewingState) {
-        Set<Team> teams = engine.getCurrentGameStructure().getTeams();
-        String wordCardTag = "[" + (wordCard.getIndex() + 1) + "]";
-        if (viewingState == ViewingState.OpenView || wordCard.isFound()) {
-            if (viewingState == ViewingState.HiddenView) {
-                wordCardTag += " V";
-            }
-            else {
-                wordCardTag += " " + (wordCard.isFound() ? "V" : "X");
-            }
-            if (teams.contains(wordCard.getTeam())) {
-                wordCardTag += " (" + wordCard.getTeam().getName() + ")";
-            }
-            else if (wordCard.isBlackWord()){
-                wordCardTag += " (BLACK)";
-            }
-        }
-        return wordCardTag;
-    }
-    private static void beginGameInstance() {
-        System.out.println("Beginning new game...");
-        engine.beginGame();
-        updateCurrentGameInstanceData();
-        gameLoop();
-    }
-    private static void loadGameStructure() {
+    private static int acceptMenuInputFromUser(final List<Integer> acceptedIntegers) {
+        final int DEFAULT_VALUE = -1;
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Write the full path of the game format file: (Supported file types: .xml");
-        String userInput = scanner.nextLine();
-        try {
-            engine.readFromGameStructureFile(userInput);
-        } catch (Exception e) {
-            // Placeholder, currently assuming "happy path"
-            System.exit(-1);
+        int userInputInt = DEFAULT_VALUE;
+        boolean isValidInputAccepted = false;
+        while (!(isValidInputAccepted)) {
+            try {
+                userInputInt = scanner.nextInt();
+                if (acceptedIntegers.contains(userInputInt)) {
+                    isValidInputAccepted = true;
+                } else {
+                    System.out.println("Invalid key, please enter one of the following numbers to select your option: " + acceptedIntegers);
+                }
+            }
+            catch (InputMismatchException ime) {
+                System.out.println("Invalid input: not a number, please enter a number");
+                scanner.nextLine();
+            }
         }
-        updateCurrentGameStructure();
+        return userInputInt;
     }
     private static Hint acceptNewHintFromUser() {
         final int DEFAULT_VALUE = -1;
@@ -228,29 +311,10 @@ then, add 2 spaces after the end of the longer string, and begin anew in that po
             }
             catch (InputMismatchException ime) {
                 System.out.println("Invalid input: not a number, please enter a number.");
+                scanner.nextLine();
             }
         }
         return new Hint(userInputHintWords, userInputNumber);
-    }
-    private static int acceptIntInputFromUser(final List<Integer> acceptedIntegers) {
-        final int DEFAULT_VALUE = -1;
-        Scanner scanner = new Scanner(System.in);
-        int userInputInt = DEFAULT_VALUE;
-        boolean isValidInputAccepted = false;
-        while (!(isValidInputAccepted)) {
-            try {
-                userInputInt = scanner.nextInt();
-                if (acceptedIntegers.contains(userInputInt)) {
-                    isValidInputAccepted = true;
-                } else {
-                    System.out.println("Invalid key, please enter one of the following numbers to select your option: " + acceptedIntegers);
-                }
-            }
-            catch (InputMismatchException ime) {
-                System.out.println("Invalid input: not a number, please enter a number");
-            }
-        }
-        return userInputInt;
     }
     private static int acceptGuessInputFromUser() {
         final int STOP_VALUE = -1;
@@ -283,48 +347,7 @@ then, add 2 spaces after the end of the longer string, and begin anew in that po
         }
         return userInputInt;
     }
-    private static int presentMainMenu() {
-        List<Integer> allowedInputsWhenNotLoaded = IntStream.rangeClosed(1, 2).boxed().collect(Collectors.toList());
-        List<Integer> allowedInputsWhenLoaded = IntStream.rangeClosed(1, 4).boxed().collect(Collectors.toList());
-        printMainMenu();
-        return acceptIntInputFromUser(!(isGameStructureLoaded()) ? allowedInputsWhenNotLoaded : allowedInputsWhenLoaded);
-    }
-    private static void printMainMenu() {
-        System.out.println("Codenames, Version 1");
-        System.out.println("Choose a number to select an option:");
-        if (!(isGameStructureLoaded())) {
-            System.out.println("(1) Load game format");
-            System.out.println("(2) Exit program");
-        }
-        else {
-            System.out.println("(1) Start a new game");
-            System.out.println("(2) Show loaded game format information");
-            System.out.println("(3) Load a different game format");
-            System.out.println("(4) Exit program");
-        }
-    }
-    private static boolean isGameStructureLoaded() {
-        return gameStructure != null;
-    }
-    private static boolean hasGameInstanceEnded() {
-        return instanceData.hasGameEnded();
-    }
-    private static void printCurrentGameStructure() {
-        if (gameStructure == null) {
-            System.out.println("Game structure has not been loaded yet.");
-            return;
-        }
-        final Words words = gameStructure.getWords();
-        final Board board = gameStructure.getBoard();
-        final Set<Team> teams = gameStructure.getTeams();
-        System.out.println("Amount of possible game words in word bank: " + words.getGameWords().size());
-        System.out.println("Amount of possible black words in word bank: " + words.getBlackWords().size());
-        System.out.println("Amount of regular words in a game: " + board.getCardCount());
-        System.out.println("Amount of black words in a game: " + board.getBlackCardCount());
-        System.out.println("Playing teams:");
-        teams.forEach(team -> System.out.println("Team " + team.getName() + ", card amount: " + team.getCardCount()));
-        System.out.println();
-    }
+
     private static void printCurrentGameInstance() {
         if (instanceData == null) {
             System.out.println("Game instance has not started yet.");

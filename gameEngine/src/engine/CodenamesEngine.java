@@ -5,8 +5,10 @@ import engine.gameinstance.Hint;
 import engine.gameinstance.MoveEvent;
 import engine.gamestructure.GameStructure;
 
+import java.io.InputStream;
+
 public interface CodenamesEngine {
-    public void readFromGameStructureFile(final String fileName) throws Exception;
+    public void readFromGameStructureFile(final InputStream fileInputStream) throws Exception;
     public GameStructure getCurrentGameStructure();
     public void beginGame();
     public void beginTurn();
