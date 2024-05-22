@@ -56,7 +56,34 @@ public class ConsoleApplication {
         }
     }
     private static void beginTurn() {
-
+        final int STOP_INT = -1;
+        engine.beginTurn();
+        updateCurrentGameInstanceData();
+        Team currentTurnTeam = instanceData.getCurrentTurn();
+        System.out.print("It is Team " + currentTurnTeam.getName() + "'s turn");
+        System.out.println(", current score: (" + instanceData.getTeamToScore().get(currentTurnTeam) + "/" + currentTurnTeam.getCardCount() +")");
+        System.out.println("Team " + currentTurnTeam.getName() + " Definer(s):");
+        printBoardState(ViewingState.OpenView);
+        engine.setCurrentHint(acceptNewHintFromUser());
+        updateCurrentGameInstanceData();
+        System.out.println();
+        System.out.println("Team " + currentTurnTeam.getName() + " Guesser(s): ");
+        boolean stopGuessingEarlier = false;
+        boolean gameEnded = false;
+        printBoardState(ViewingState.HiddenView);
+        Hint currentHint = instanceData.getCurrentHint();
+        System.out.println("Hint: " + currentHint.getHintWords() + ", number: " + currentHint.getNumber());
+        for (int i = 0; i < currentHint.getNumber() && !stopGuessingEarlier && !gameEnded; i++) {
+            System.out.println("Enter a number corresponding to a word to select that word: (write \"end\" to prematurely end the turn)");
+            int guessInput = acceptIntInputFromUser(IntStream.rangeClosed(1, gameStructure.getTotalCardsInGame()).boxed().collect(Collectors.toList()), "end");
+            if (guessInput != STOP_INT) {
+                engine.makeMove(guessInput);
+                updateCurrentGameInstanceData();
+            }
+            else {
+                stopGuessingEarlier = true;
+            }
+        }
     }
     private static void selectActionStandbyMenu(final int input) {
         switch (input) {
@@ -78,7 +105,7 @@ public class ConsoleApplication {
         }
     }
     private static void gameLoop() {
-        while (instanceData.getGameState() != GameState.Ended) {
+        while (!instanceData.hasGameEnded()) {
             printStandbyMenu();
             int userInput = acceptIntInputFromUser(IntStream.rangeClosed(1, 5).boxed().collect(Collectors.toList()));
             selectActionStandbyMenu(userInput);
@@ -91,7 +118,7 @@ public class ConsoleApplication {
         instanceData = engine.getCurrentGameInstanceData();
     }
     private static void printStandbyMenu() {
-        printBoardState(instanceData.getViewingState());
+        printBoardState(ViewingState.HiddenView);
         System.out.println("Next turn: Team " + instanceData.getTurnOrder().getNextTurn().getName());
         System.out.println("(1) Begin turn");
         System.out.println("(2) Show current game information");
@@ -109,7 +136,7 @@ public class ConsoleApplication {
             List<WordCard> currentLineList = wordCards.stream().skip((long)i*boardColumns).limit(boardColumns).collect(Collectors.toList());
             currentLineList.forEach(wordCard -> System.out.print(wordCard.getWord() + "  "));
             System.out.println();
-            currentLineList.forEach(wordCard -> System.out.print(createWordCardTag(wordCard, ViewingState.OpenView) + "  "));
+            currentLineList.forEach(wordCard -> System.out.print(createWordCardTag(wordCard, viewingState) + "  "));
             System.out.println();
         }
         /*
@@ -124,7 +151,7 @@ then, add 2 spaces after the end of the longer string, and begin anew in that po
     }
     private static String createWordCardTag(final WordCard wordCard, final ViewingState viewingState) {
         Set<Team> teams = engine.getCurrentGameStructure().getTeams();
-        String wordCardTag = "[" + wordCard.getIndex() + "]";
+        String wordCardTag = "[" + (wordCard.getIndex() + 1) + "]";
         if (viewingState == ViewingState.OpenView || wordCard.isFound()) {
             if (viewingState == ViewingState.HiddenView) {
                 wordCardTag += " V";
@@ -160,18 +187,68 @@ then, add 2 spaces after the end of the longer string, and begin anew in that po
         }
         updateCurrentGameStructure();
     }
-    private static int acceptIntInputFromUser(final List<Integer> acceptedInts) {
+    private static Hint acceptNewHintFromUser() {
+        final int DEFAULT_VALUE = -1;
+        Scanner scanner = new Scanner(System.in);
+        String userInputHintWords;
+        int userInputNumber = DEFAULT_VALUE;
+        boolean isValidNumberAccepted = false;
+        System.out.println("Enter the hint words (the number will be asked later):");
+        userInputHintWords = scanner.nextLine();
+        System.out.println("Now enter the number of words to guess:");
+        while (!isValidNumberAccepted) {
+            try {
+                userInputNumber = scanner.nextInt();
+                isValidNumberAccepted = true;
+            }
+            catch (InputMismatchException ime) {
+                System.out.println("Invalid input: not a number, please enter a number.");
+            }
+        }
+        return new Hint(userInputHintWords, userInputNumber);
+    }
+    private static int acceptIntInputFromUser(final List<Integer> acceptedIntegers) {
         final int DEFAULT_VALUE = -1;
         Scanner scanner = new Scanner(System.in);
         int userInputInt = DEFAULT_VALUE;
         boolean isValidInputAccepted = false;
         while (!(isValidInputAccepted)) {
-            userInputInt = scanner.nextInt();
-            if (acceptedInts.contains(userInputInt)) {
-                isValidInputAccepted = true;
+            try {
+                userInputInt = scanner.nextInt();
+                if (acceptedIntegers.contains(userInputInt)) {
+                    isValidInputAccepted = true;
+                } else {
+                    System.out.println("Invalid key, please enter one of the following numbers to select your option: " + acceptedInts);
+                }
             }
-            else {
-                System.out.println("Invalid key, please enter one of the following numbers to select your option: " + acceptedInts);
+            catch (InputMismatchException ime) {
+                System.out.println("Invalid input: not a number, please enter a number");
+            }
+        }
+        return userInputInt;
+    }
+    private static int acceptIntInputFromUser(final List<Integer> acceptedIntegers, final String terminatingString) {
+        final int DEFAULT_VALUE = -1;
+        Scanner scanner = new Scanner(System.in);
+        int userInputInt = DEFAULT_VALUE;
+        String rawUserInput;
+        boolean isValidInputAccepted = false;
+        while (!(isValidInputAccepted)) {
+            rawUserInput = scanner.nextLine();
+            if (rawUserInput.toLowerCase().equals(terminatingString)) {
+                return DEFAULT_VALUE;
+            } else {
+                try {
+                    userInputInt = Integer.parseInt(rawUserInput);
+                    if (acceptedIntegers.contains(userInputInt)) {
+                        isValidInputAccepted = true;
+                    } else {
+                        System.out.println("Invalid number, please enter one of the following numbers to select your option: " + acceptedIntegers);
+                    }
+                }
+                catch (NumberFormatException nfe) {
+                    System.out.println("Invalid input: not a number, please enter a number or \"" + terminatingString + "\"to stop.");
+                }
             }
         }
         return userInputInt;
@@ -197,10 +274,10 @@ then, add 2 spaces after the end of the longer string, and begin anew in that po
         }
     }
     private static boolean isGameStructureLoaded() {
-        return engine.getCurrentGameStructure() != null;
+        return gameStructure != null;
     }
     private static boolean hasGameInstanceEnded() {
-        return engine.getCurrentGameInstanceData().getGameState() == GameState.Ended;
+        return instanceData.hasGameEnded();
     }
     private static void printCurrentGameStructure() {
         if (gameStructure == null) {
@@ -227,12 +304,13 @@ then, add 2 spaces after the end of the longer string, and begin anew in that po
         }
         Map<Team, Integer> teamToScore = instanceData.getTeamToScore();
         Map<Team, Integer> teamToTurnCount = instanceData.getTurnOrder().getTeamToTurnCount();
-        printBoardState(instanceData.getViewingState());
+        printBoardState(ViewingState.OpenView);
         for (Team team : gameStructure.getTeams()) {
             System.out.println("Team " + team.getName());
             System.out.println("Score: (" + teamToScore.get(team) + "/" + team.getCardCount() + ")");
             System.out.println("Turn count: " + teamToTurnCount.get(team));
         }
         System.out.println("Next turn: Team " + instanceData.getTurnOrder().getNextTurn().getName());
+        System.out.println();
     }
 }

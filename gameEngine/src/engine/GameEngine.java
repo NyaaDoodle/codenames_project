@@ -2,6 +2,7 @@ package engine;
 
 import engine.gameinstance.GameInstance;
 import engine.gameinstance.GameInstanceData;
+import engine.gameinstance.Hint;
 import engine.gamestructure.GameStructure;
 import engine.gamestructure.Team;
 import engine.jaxb.generated.JAXBConversion;
@@ -21,7 +22,7 @@ public class GameEngine implements CodenamesEngine {
     public GameEngine() {}
 
     @Override
-    public void readFromGameStructureFile(String fileName) throws Exception {
+    public void readFromGameStructureFile(final String fileName) throws Exception {
         try (InputStream inputStream = Files.newInputStream(Paths.get(fileName));) {
             gameStructure = JAXBConversion.XMLToObjectsConversion(inputStream);
         }
@@ -49,12 +50,17 @@ public class GameEngine implements CodenamesEngine {
     }
 
     @Override
-    public void changeViewingState() {
-
+    public void beginTurn() {
+        gameInstance.moveToNextTurn();
     }
 
     @Override
-    public void makeMove(int wordIndex) {
+    public void setCurrentHint(final Hint newHint) {
+        gameInstance.setCurrentHint(newHint);
+    }
+
+    @Override
+    public void makeMove(final int wordIndex) {
 
     }
 
@@ -63,11 +69,6 @@ public class GameEngine implements CodenamesEngine {
 
     @Override
     public void endGame() {
-
-    }
-
-    @Override
-    public void closeProgram() {
 
     }
 }

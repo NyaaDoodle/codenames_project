@@ -1,6 +1,5 @@
 package engine.gameinstance;
 
-import engine.GameEngine;
 import engine.gamestructure.GameStructure;
 import engine.gamestructure.Team;
 
@@ -12,9 +11,8 @@ public class GameInstance {
     private final GameWordCards wordCards;
     private final Map<Team, Integer> teamToScore = new HashMap<>();
     private final TurnOrder turnOrder;
-    private GameState gameState = GameState.Standby;
-    private ViewingState viewingState = ViewingState.HiddenView;
     private Hint currentHint;
+    private boolean hasGameEnded = false;
 
     public GameInstance(final GameStructure gameStructure, final Queue<Team> turnOrder) {
         this.gameStructure = gameStructure;
@@ -32,8 +30,8 @@ public class GameInstance {
         return currentHint;
     }
 
-    public void setCurrentHint(Hint currentHint) {
-        this.currentHint = currentHint;
+    public void setCurrentHint(final Hint hint) {
+        this.currentHint = hint;
     }
 
     public GameWordCards getWordCards() {
@@ -48,15 +46,11 @@ public class GameInstance {
         return turnOrder;
     }
 
-    public GameState getGameState() {
-        return gameState;
+    public boolean hasGameEnded() {
+        return hasGameEnded;
     }
 
-    public ViewingState getViewingState() {
-        return viewingState;
-    }
-
-    public void setViewingState(ViewingState viewingState) {
-        this.viewingState = viewingState;
+    public void moveToNextTurn() {
+        turnOrder.moveToNextTurn();
     }
 }

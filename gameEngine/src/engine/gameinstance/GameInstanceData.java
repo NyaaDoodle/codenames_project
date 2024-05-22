@@ -1,6 +1,5 @@
 package engine.gameinstance;
 
-import engine.gamestructure.Board;
 import engine.gamestructure.GameStructure;
 import engine.gamestructure.Team;
 
@@ -11,18 +10,16 @@ public class GameInstanceData {
     private final GameWordCards wordCards;
     private final Map<Team, Integer> teamToScore;
     private final TurnOrder turnOrder;
-    private final GameState gameState;
-    private final ViewingState viewingState;
     private final Hint currentHint;
+    private final boolean hasGameEnded;
 
     public GameInstanceData(GameInstance gameInstance) {
         this.gameStructure = gameInstance.getGameStructure();
         this.wordCards = gameInstance.getWordCards();
         this.teamToScore = gameInstance.getTeamToScore();
         this.turnOrder = gameInstance.getTurnOrder();
-        this.gameState = gameInstance.getGameState();
-        this.viewingState = gameInstance.getViewingState();
         this.currentHint = gameInstance.getCurrentHint();
+        this.hasGameEnded = gameInstance.hasGameEnded();
     }
 
     public GameStructure getGameStructure() {
@@ -45,11 +42,15 @@ public class GameInstanceData {
         return currentHint;
     }
 
-    public ViewingState getViewingState() {
-        return viewingState;
+    public boolean hasGameEnded() {
+        return hasGameEnded;
     }
 
-    public GameState getGameState() {
-        return gameState;
+    public Team getCurrentTurn() {
+        return turnOrder.getCurrentTurn();
+    }
+
+    public Team getNextTurn() {
+        return turnOrder.getNextTurn();
     }
 }

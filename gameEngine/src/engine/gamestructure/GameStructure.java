@@ -25,6 +25,10 @@ public class GameStructure {
         return Collections.unmodifiableSet(teams);
     }
 
+    public int getTotalCardsInGame() {
+        return board.getCardCount() + board.getBlackCardCount();
+    }
+
     @Override
     public String toString() {
         return "GameStructure{" +
