@@ -1,6 +1,7 @@
 package consoleui;
 
 import engine.GameEngine;
+import engine.exceptions.GameStructureFileException;
 import engine.gameinstance.*;
 import engine.gamestructure.Board;
 import engine.gamestructure.GameStructure;
@@ -93,16 +94,31 @@ public class ConsoleApplication {
         System.out.println("Write the full path of the game format file: (Supported file types: .xml");
         while (!isValidInputAccepted) {
             userInput = scanner.nextLine();
+            try {
+
+            }
+            catch (IOException ioe) {
+                System.out.println("Input specified is not a file or does not exist. Please enter a valid game format file with its full path.");
+            }
+            catch (JAXBException je) {
+                System.out.println("Invalid XML file according to schema-layout. Please correct the file to fit the schema requirements.");
+                System.out.println(je.toString());
+            }
+            catch (GameStructureFileException gsfe) {
+                System.out.println(gsfe.getMessage());
+            }
+        }
+        while (!isValidInputAccepted) {
+            userInput = scanner.nextLine();
             if (userInput.endsWith(".xml")) {
                 try (InputStream inputStream = Files.newInputStream(Paths.get(userInput))) {
                     engine.readFromGameStructureFile(inputStream);
                     isValidInputAccepted = true;
                 } catch (IOException ioe) {
-                    System.out.println("Input specified is not a file or does not exist. Please enter a valid game format file with its full path.");
+
                 }
                 catch (JAXBException je) {
-                    System.out.println("Invalid XML file according to schema-layout. Please correct the file to fit the schema requirements.");
-                    System.out.println(je.toString());
+
                 }
             }
             else {

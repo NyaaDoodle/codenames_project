@@ -1,5 +1,6 @@
 package engine;
 
+import engine.exceptions.GameStructureFileException;
 import engine.gameinstance.GameInstance;
 import engine.gameinstance.GameInstanceData;
 import engine.gameinstance.Hint;
@@ -23,7 +24,8 @@ public class GameEngine implements CodenamesEngine {
     public GameEngine() {}
 
     @Override
-    public void readFromGameStructureFile(final InputStream fileInputStream) throws JAXBException {
+    public void readFromGameStructureFile(final String fileName) throws IOException, JAXBException, GameStructureFileException {
+
         gameStructure = JAXBConversion.XMLToObjectsConversion(fileInputStream);
     }
 

@@ -1,5 +1,6 @@
 package engine.jaxb.generated;
 
+import engine.exceptions.GameStructureFileException;
 import engine.gamestructure.Board;
 import engine.gamestructure.GameStructure;
 import engine.gamestructure.Team;
@@ -15,7 +16,7 @@ import java.util.stream.Collectors;
 public class JAXBConversion {
     private final static String GENERATED_XJC_CLASSES_PACKAGE = "engine.jaxb.generated";
     private final static String splitDelimiters = "\\s";
-    public static GameStructure XMLToObjectsConversion(InputStream inputStream) throws JAXBException {
+    public static GameStructure XMLToObjectsConversion(InputStream inputStream) throws JAXBException, GameStructureFileException {
         JAXBContext jaxbContext = JAXBContext.newInstance(GENERATED_XJC_CLASSES_PACKAGE);
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         ECNGame ecnGame = (ECNGame) unmarshaller.unmarshal(inputStream);
