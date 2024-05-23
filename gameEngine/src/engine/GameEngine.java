@@ -24,9 +24,11 @@ public class GameEngine implements CodenamesEngine {
     public GameEngine() {}
 
     @Override
-    public void readFromGameStructureFile(final String fileName) throws IOException, JAXBException, GameStructureFileException {
-
-        gameStructure = JAXBConversion.XMLToObjectsConversion(fileInputStream);
+    public void readFromGameStructureFile(final InputStream inputStream) throws JAXBException, GameStructureFileException {
+        if (gameInstance != null) {
+            gameInstance = null;
+        }
+        gameStructure = JAXBConversion.XMLToObjectsConversion(inputStream);
     }
 
     @Override

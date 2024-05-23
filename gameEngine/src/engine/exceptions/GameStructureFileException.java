@@ -1,7 +1,7 @@
 package engine.exceptions;
 
 public class GameStructureFileException extends Exception {
-    GameStructureFileException(String message) {
+    public GameStructureFileException(String message) {
         super(message);
     }
     @Override

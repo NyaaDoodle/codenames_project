@@ -7,9 +7,9 @@ import java.util.Set;
 public class GameStructure {
     private final Words words;
     private final Board board;
-    private final Set<Team> teams;
+    private final List<Team> teams;
 
-    public GameStructure(Words words, Board board, Set<Team> teams) {
+    public GameStructure(Words words, Board board, List<Team> teams) {
         this.words = words;
         this.board = board;
         this.teams = teams;
@@ -21,8 +21,8 @@ public class GameStructure {
 
     public Board getBoard() { return board; }
 
-    public Set<Team> getTeams() {
-        return Collections.unmodifiableSet(teams);
+    public List<Team> getTeams() {
+        return Collections.unmodifiableList(teams);
     }
 
     public int getTotalCardsInGame() {

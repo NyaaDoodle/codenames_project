@@ -94,35 +94,21 @@ public class ConsoleApplication {
         System.out.println("Write the full path of the game format file: (Supported file types: .xml");
         while (!isValidInputAccepted) {
             userInput = scanner.nextLine();
-            try {
-
-            }
-            catch (IOException ioe) {
-                System.out.println("Input specified is not a file or does not exist. Please enter a valid game format file with its full path.");
-            }
-            catch (JAXBException je) {
-                System.out.println("Invalid XML file according to schema-layout. Please correct the file to fit the schema requirements.");
-                System.out.println(je.toString());
-            }
-            catch (GameStructureFileException gsfe) {
-                System.out.println(gsfe.getMessage());
-            }
-        }
-        while (!isValidInputAccepted) {
-            userInput = scanner.nextLine();
             if (userInput.endsWith(".xml")) {
                 try (InputStream inputStream = Files.newInputStream(Paths.get(userInput))) {
                     engine.readFromGameStructureFile(inputStream);
                     isValidInputAccepted = true;
                 } catch (IOException ioe) {
-
-                }
-                catch (JAXBException je) {
-
+                    System.out.println("Input specified is not a file or does not exist. Please enter a valid game format file with its full path.");
+                } catch (JAXBException je) {
+                    System.out.println("Invalid XML file according to schema-layout. Please correct the file to fit the schema requirements.");
+                    System.out.println(je.toString());
+                } catch (GameStructureFileException gsfe) {
+                    System.out.println(gsfe.getMessage());
                 }
             }
             else {
-                System.out.println("Input specified is not of the correct file type. Please enter a valid game format file ending in \".xml\".");
+                System.out.println("File specified is not an XML file or ends with \".xml\". Please enter a valid XML game format file.");
             }
         }
         updateCurrentGameStructure();
@@ -139,7 +125,7 @@ public class ConsoleApplication {
         }
         final Words words = gameStructure.getWords();
         final Board board = gameStructure.getBoard();
-        final Set<Team> teams = gameStructure.getTeams();
+        final List<Team> teams = gameStructure.getTeams();
         System.out.println("Amount of possible game words in word bank: " + words.getGameWords().size());
         System.out.println("Amount of possible black words in word bank: " + words.getBlackWords().size());
         System.out.println("Amount of regular words in a game: " + board.getCardCount());
@@ -194,7 +180,7 @@ then, add 2 spaces after the end of the longer string, and begin anew in that po
 
     }
     private static String createWordCardTag(final WordCard wordCard, final ViewingState viewingState) {
-        Set<Team> teams = engine.getCurrentGameStructure().getTeams();
+        List<Team> teams = engine.getCurrentGameStructure().getTeams();
         String wordCardTag = "[" + (wordCard.getIndex() + 1) + "]";
         if (viewingState == ViewingState.OpenView || wordCard.isFound()) {
             if (viewingState == ViewingState.HiddenView) {

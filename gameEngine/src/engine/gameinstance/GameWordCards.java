@@ -10,7 +10,7 @@ public class GameWordCards {
     private final static Team NEUTRAL_TEAM = new Team("", 0);
     private final List<WordCard> wordCards = new ArrayList<>();
     private final Words wordBanks;
-    private final Set<Team> teams;
+    private final List<Team> teams;
     private final int gameCardsCount;
     private final int blackCardsCount;
 
@@ -18,7 +18,7 @@ public class GameWordCards {
         this(gameStructure.getWords(), gameStructure.getTeams(), gameStructure.getBoard().getCardCount(), gameStructure.getBoard().getBlackCardCount());
     }
 
-    public GameWordCards(Words wordBanks, Set<Team> teams, int gameCardsCount, int blackCardsCount) {
+    public GameWordCards(Words wordBanks, List<Team> teams, int gameCardsCount, int blackCardsCount) {
         this.wordBanks = wordBanks;
         this.teams = teams;
         this.gameCardsCount = gameCardsCount;
