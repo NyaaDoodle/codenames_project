@@ -18,15 +18,35 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class ConsoleApplication {
+    private static final int DEFAULT_VALUE = -1;
     private static final GameEngine engine = new GameEngine();
     private static GameStructure gameStructure;
     private static GameInstanceData instanceData;
     private static boolean toExitProgram = false;
+    private static boolean boardPrintedOnceAlready = false;
+    private static int selectionMadeMidGame = DEFAULT_VALUE;
     public static void main(String[] args) {
         int currentUserInput;
         while (!toExitProgram) {
-            currentUserInput = presentMainMenu();
-            selectActionMainMenu(currentUserInput);
+            if (selectionMadeMidGame == DEFAULT_VALUE) {
+                currentUserInput = presentMainMenu();
+                selectActionMainMenu(currentUserInput);
+            }
+            else {
+                int temp = selectionMadeMidGame;
+                selectionMadeMidGame = DEFAULT_VALUE;
+                switch (temp) {
+                    case 3:
+                        beginGameInstance();
+                        break;
+                    case 4:
+                        loadGameStructure();
+                        break;
+                    case 5:
+                        toExitProgram = true;
+                        break;
+                }
+            }
         }
     }
     private static int presentMainMenu() {
@@ -91,7 +111,7 @@ public class ConsoleApplication {
         Scanner scanner = new Scanner(System.in);
         String userInput;
         boolean isValidInputAccepted = false;
-        System.out.println("Write the full path of the game format file: (Supported file types: .xml");
+        System.out.println("Write the full path of the game format file: (Supported file types: .xml)");
         while (!isValidInputAccepted) {
             userInput = scanner.nextLine();
             if (userInput.endsWith(".xml")) {
@@ -102,7 +122,6 @@ public class ConsoleApplication {
                     System.out.println("Input specified is not a file or does not exist. Please enter a valid game format file with its full path.");
                 } catch (JAXBException je) {
                     System.out.println("Invalid XML file according to schema-layout. Please correct the file to fit the schema requirements.");
-                    System.out.println(je.toString());
                 } catch (GameStructureFileException gsfe) {
                     System.out.println(gsfe.getMessage());
                 }
@@ -146,9 +165,16 @@ public class ConsoleApplication {
             int userInput = acceptMenuInputFromUser(IntStream.rangeClosed(1, 5).boxed().collect(Collectors.toList()));
             selectActionStandbyMenu(userInput);
         }
+        engine.clearGameInstance();
+        instanceData = null;
     }
     private static void printStandbyMenu() {
-        printBoardState(ViewingState.HiddenView);
+        if (!boardPrintedOnceAlready) {
+            printBoardState(ViewingState.HiddenView);
+        }
+        else {
+            boardPrintedOnceAlready = false;
+        }
         System.out.println("Next turn: Team " + instanceData.getTurnOrder().getNextTurn().getName());
         System.out.println("(1) Begin turn");
         System.out.println("(2) Show current game information");
@@ -208,15 +234,13 @@ then, add 2 spaces after the end of the longer string, and begin anew in that po
                 break;
             case 2:
                 printCurrentGameInstance();
+                boardPrintedOnceAlready = true;
                 break;
             case 3:
-                beginGameInstance();
-                break;
             case 4:
-                loadGameStructure();
-                break;
             case 5:
-                toExitProgram = true;
+                selectionMadeMidGame = input;
+                endGameEarly();
                 break;
         }
     }
@@ -365,5 +389,9 @@ then, add 2 spaces after the end of the longer string, and begin anew in that po
         }
         System.out.println("Next turn: Team " + instanceData.getTurnOrder().getNextTurn().getName());
         System.out.println();
+    }
+    private static void endGameEarly() {
+        engine.endGameAbruptly();
+        updateCurrentGameInstanceData();
     }
 }

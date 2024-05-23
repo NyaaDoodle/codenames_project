@@ -18,7 +18,7 @@ public class GameInstance {
     public GameInstance(final GameStructure gameStructure, final Queue<Team> turnOrder) {
         this.gameStructure = gameStructure;
         this.wordCards = new GameWordCards(gameStructure);
-        gameStructure.getTeams().stream().forEach((team) -> teamToScore.put(team, STARTING_TEAM_SCORE));
+        gameStructure.getTeams().forEach((team) -> teamToScore.put(team, STARTING_TEAM_SCORE));
         this.currentHint = null;
         this.turnOrder = new TurnOrder(turnOrder);
     }
@@ -83,5 +83,8 @@ public class GameInstance {
             return teamWon;
         }
         return null;
+    }
+    public void endGameAbruptly() {
+        hasGameEnded = true;
     }
 }
